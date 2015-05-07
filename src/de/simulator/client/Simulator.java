@@ -24,11 +24,13 @@ public class Simulator implements EntryPoint {
 	private Button runButton = new Button("run");
 	private Button pushButton = new Button("push");
 	// Charts
-	private Chart channels = new Chart().setType(Series.Type.SPLINE).setChartTitleText("Lastgang").setMarginRight(10);
-	private Chart preViewDevice = new Chart().setType(Series.Type.SPLINE).setChartTitleText("Vorschau").setMarginRight(10);
+	private Chart channels = new Chart().setType(Series.Type.SPLINE)
+			.setChartTitleText("Lastgang").setMarginRight(10);
+	private Chart preViewDevice = new Chart().setType(Series.Type.SPLINE)
+			.setChartTitleText("Vorschau").setMarginRight(10);
 	// Labels
-	private Label test4 = new Label("menu");
-
+	private Label test4 = new Label("menu");  
+	
 	// cellbrowser
 	private static class CustomTreeModel implements TreeViewModel {
 
@@ -60,22 +62,22 @@ public class Simulator implements EntryPoint {
 		}
 	}
 
-	
 	public void onModuleLoad() {
-		Series series = channels.createSeries().setName("Leistungsaufnahme").
-				setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
+		Series series = channels.createSeries().setName("Leistungsaufnahme")
+				.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
 		channels.addSeries(series);
 		channels.setStyleName("channels");
-		
-		Series preViewSeries = preViewDevice.createSeries().setName("Leistungsaufnahme des Geraets").
-				setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
+
+		Series preViewSeries = preViewDevice.createSeries()
+				.setName("Leistungsaufnahme des Geraets")
+				.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
 		preViewDevice.addSeries(preViewSeries);
 		preViewDevice.setStyleName("preViewDevice");
-			
-	    TreeViewModel model = new CustomTreeModel();
-	    Builder<String> cellTreeBuilder = new Builder<String>(model,"item1");
-	    CellBrowser deviceTree = cellTreeBuilder.build();
-	    deviceTree.setSize("625px","300px");
+
+		TreeViewModel model = new CustomTreeModel();
+		Builder<String> cellTreeBuilder = new Builder<String>(model, "item1");
+		CellBrowser deviceTree = cellTreeBuilder.build();
+		deviceTree.setSize("625px", "300px");
 
 		configPanel.add(deviceTree);
 		configPanel.add(preViewDevice);
@@ -93,7 +95,6 @@ public class Simulator implements EntryPoint {
 		browserPanel.add(menu);
 		browserPanel.add(mainPanel);
 		browserPanel.addStyleName("browserpanel");
-		browserPanel.setCellWidth(menu, "300px");
 		browserPanel.setCellWidth(mainPanel, "100%");
 
 		RootPanel.get("entry").add(browserPanel);
