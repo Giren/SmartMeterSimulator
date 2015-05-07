@@ -1,0 +1,8 @@
+.project
+.classpath
+.settings/
+.gwt/
+gwt-unitCache/
+war/de.simulator.Simulator/
+war/WEB-INF/classes/
+war/WEB-INF/lib/
