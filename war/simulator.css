@@ -1,0 +1,32 @@
+@CHARSET "UTF-8";
+
+.mainpanel {
+  border: 1px solid silver;
+  padding: 2px;
+  margin-bottom:6px;
+  width: 100%;
+}
+
+.browserpanel {
+  border: 1px solid silver;
+  padding: 2px;
+  margin-bottom:6px;
+  width: 100%;
+}
+
+.browserpanel td {
+  width: auto;
+}
+
+.menu {
+  border: 1px solid silver;
+  padding: 2px;
+  margin-bottom:6px;
+  width: 200px;
+}
+
+.configPanel {
+  border: 1px solid pink;
+  padding: 2px;
+  margin-bottom:6px;
+}
