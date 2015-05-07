@@ -51,6 +51,8 @@ public class Simulator implements EntryPoint {
 		browserPanel.add(menu);
 		browserPanel.add(mainPanel);
 		browserPanel.addStyleName("browserpanel");
+		browserPanel.setCellWidth(menu, "300");
+		browserPanel.setCellWidth(mainPanel, "100%");
 		
 		RootPanel.get("entry").add(title);
 		RootPanel.get("entry").add(browserPanel);
