@@ -1,6 +1,7 @@
 .project
 .classpath
-.settings
+.settings/
+.gwt/
 gwt-unitCache/
 war/de.simulator.Simulator/
 war/WEB-INF/classes/
