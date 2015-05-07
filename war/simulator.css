@@ -5,12 +5,14 @@
   padding: 2px;
   margin-bottom:6px;
   width: 100%;
+  height: 100%;
 }
 
 .browserpanel {
   border: 1px solid silver;
   padding: 2px;
   margin-bottom:6px;
+  height: 100%;
 }
 
 .menu {
@@ -24,4 +26,18 @@
   border: 1px solid pink;
   padding: 2px;
   margin-bottom:6px;
+  width: 100%;
+  height: 40%;
+}
+
+.channels {
+	height: 60%;
+}
+
+.preViewDevice {
+	height: 300px;
+}
+
+body {
+  background-color: white;
 }
