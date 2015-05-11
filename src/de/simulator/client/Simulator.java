@@ -1,8 +1,11 @@
 package de.simulator.client;
 
 import org.moxieapps.gwt.highcharts.client.*;
+
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.cellview.client.CellBrowser;
 import com.google.gwt.user.cellview.client.CellBrowser.Builder;
 import com.google.gwt.user.client.ui.Button;
@@ -28,8 +31,15 @@ public class Simulator implements EntryPoint {
 			.setChartTitleText("Lastgang").setMarginRight(10);
 	private Chart preViewDevice = new Chart().setType(Series.Type.SPLINE)
 			.setChartTitleText("Vorschau").setMarginRight(10);
-	// Labels
-	private Label test4 = new Label("menu");  
+	//Label
+	private Label testLabel = new Label("test");
+	private Label addPoints = new Label("add to Channel");
+	//Punktmenge
+	Series series = channels.createSeries().setName("Leistungsaufnahme")
+			.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
+	Series preViewSeries = preViewDevice.createSeries()
+			.setName("Leistungsaufnahme des Geraets")
+			.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
 	
 	// cellbrowser
 	private static class CustomTreeModel implements TreeViewModel {
@@ -63,14 +73,14 @@ public class Simulator implements EntryPoint {
 	}
 
 	public void onModuleLoad() {
-		Series series = channels.createSeries().setName("Leistungsaufnahme")
-				.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
+		
+		testLabel.getElement().setDraggable(Element.DRAGGABLE_TRUE);
+		menu.add(testLabel);
+		menu.add(addPoints);
+	
 		channels.addSeries(series);
 		channels.setStyleName("channels");
-
-		Series preViewSeries = preViewDevice.createSeries()
-				.setName("Leistungsaufnahme des Geraets")
-				.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
+	
 		preViewDevice.addSeries(preViewSeries);
 		preViewDevice.setStyleName("preViewDevice");
 
@@ -78,14 +88,16 @@ public class Simulator implements EntryPoint {
 		Builder<String> cellTreeBuilder = new Builder<String>(model, "item1");
 		CellBrowser deviceTree = cellTreeBuilder.build();
 		deviceTree.setSize("625px", "300px");
-
+		
 		configPanel.add(deviceTree);
 		configPanel.add(preViewDevice);
 		configPanel.addStyleName("configPanel");
 		configPanel.setCellWidth(deviceTree, "200px");
 		configPanel.setCellWidth(preViewDevice, "100%");
 
-		menu.add(test4);
+		menu.add(runButton);
+		menu.add(reloadButton);
+		menu.add(pushButton);
 		menu.addStyleName("menu");
 
 		mainPanel.add(configPanel);
@@ -98,5 +110,35 @@ public class Simulator implements EntryPoint {
 		browserPanel.setCellWidth(mainPanel, "100%");
 
 		RootPanel.get("entry").add(browserPanel);
+		
+		testLabel.addDragStartHandler(new DragStartHandler() {
+		    @Override
+		    public void onDragStart(DragStartEvent event) {
+		        // required
+		        event.setData("text", "Hello World");
+		    }
+		});
+		
+		// required: you must add dragoverhandler to create a target
+		addPoints.addDragOverHandler(new DragOverHandler() {
+			@Override
+		    public void onDragOver(DragOverEvent event) {
+				addPoints.getElement().getStyle().setBackgroundColor("#bfa");
+		    }
+		});
+		 
+		// add drop hanlder
+		addPoints.addDropHandler(new DropHandler() {
+		    @Override
+		    public void onDrop(DropEvent event) {
+		        // prevent the native text drop
+		        event.preventDefault();
+		 
+		        // get the data out of the event
+		        String data = event.getData("text");
+		        addPoints.setText(data);
+		        series.addPoint(1000, 1000);
+		    }
+		});
 	}
 }
