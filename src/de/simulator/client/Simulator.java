@@ -40,13 +40,9 @@ public class Simulator implements EntryPoint {
 			.setName("Leistungsaufnahme des Geraets")
 			.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
 
-	// cellbrowser
+	// Cellbrowser
 	private static class CustomTreeModel implements TreeViewModel {
 
-		/**
-		 * Get the {@link NodeInfo} that provides the children of the specified
-		 * value.
-		 */
 		public <T> NodeInfo<?> getNodeInfo(T value) {
 			/*
 			 * Create some data in a data provider. Use the parent value as a
@@ -61,10 +57,6 @@ public class Simulator implements EntryPoint {
 			return new DefaultNodeInfo<String>(dataProvider, new TextCell());
 		}
 
-		/**
-		 * Check if the specified value represents a leaf node. Leaf nodes
-		 * cannot be opened.
-		 */
 		public boolean isLeaf(Object value) {
 			// The maximum length of a value is ten characters.
 			return value.toString().length() > 10;
@@ -119,7 +111,8 @@ public class Simulator implements EntryPoint {
 
 		channels.addDomHandler(new DropHandler() {
 			public void onDrop(DropEvent event) {
-				series.addPoint(7, 100);
+				series.addPoint(7, 100);				
+				channels.addSeries(series);
 			}
 		}, DropEvent.getType());
 
