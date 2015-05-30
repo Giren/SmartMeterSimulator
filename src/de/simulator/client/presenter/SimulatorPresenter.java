@@ -5,8 +5,11 @@ import gwtquery.plugins.droppable.client.events.DropEvent.DropEventHandler;
 import gwtquery.plugins.droppable.client.events.HasDropHandler;
 import gwtquery.plugins.droppable.client.gwt.DragAndDropDataGrid;
 
+import java.util.ArrayList;
+
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.ChartTitle;
+import org.moxieapps.gwt.highcharts.client.Series;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -59,8 +62,6 @@ public class SimulatorPresenter implements Presenter {
 	}
 
 	public void bind() {
-
-		// TODO
 		// Hier alle Events abhandeln, die SimulatorView() betreffen
 
 		// Event Reload Button
@@ -85,11 +86,10 @@ public class SimulatorPresenter implements Presenter {
 					@Override
 					public void onSelectionChange(
 							DeviceSelectionChangeEvent event) {
-						// TODO Auto-generated method stub
 						// Device selected = event.getDevice();
 						// display.getDeviceDataGrid().getSelectionModel().;
-						Window.alert("alertmessage "
-								+ event.getDevice().getName());
+						// Window.alert("alertmessage " +
+						// event.getDevice().getName());
 						Device selected = event.getDevice();
 						if (selected != null) {
 							// Window.alert( "You selected: " +
@@ -103,8 +103,11 @@ public class SimulatorPresenter implements Presenter {
 									new ChartTitle().setText("Vorschau "
 											+ selected.getManufacturer() + ", "
 											+ selected.getName()), null);
-							display.getLoadProfilePreViewChart().addSeries(
-									selected.loadProfile, true, true);
+							display.getLoadProfilePreViewChart()
+									.addSeries(
+											arrayListToSeries(selected
+													.getLoadProfile()), true,
+											true);
 						}
 					}
 				});
@@ -115,7 +118,7 @@ public class SimulatorPresenter implements Presenter {
 					@Override
 					public void onSelectionChange(
 							com.google.gwt.view.client.SelectionChangeEvent event) {
-						// TODO Auto-generated method stub
+						// Window.alert( "fire onselectionchange");
 						eventBus.fireEvent(new DeviceSelectionChangeEvent(
 								display.getSingleSelectionModel()
 										.getSelectedObject()));
@@ -146,8 +149,19 @@ public class SimulatorPresenter implements Presenter {
 	private void doAddNewDeviceToChart(Device device) {
 		// Window.alert( "AddNewDeviceToChart der ID:"+id);
 		display.getCellList().getList().add(device.getName());
-		display.getLoadProfileViewChart().addSeries(device.loadProfile, true,
-				true);
+		display.getLoadProfileViewChart().addSeries(
+				arrayListToSeries(device.getLoadProfile()), true, true);
+	}
+
+	private Series arrayListToSeries(ArrayList<Integer> arrayList) {
+		Series newSeries = new Chart().createSeries().setName(
+				"Leistungsaufnahme");
+
+		for (int i = 0; i < arrayList.size(); i++) {
+			newSeries.addPoint(arrayList.get(i));
+		}
+
+		return newSeries;
 	}
 
 	public void go(final HasWidgets container) {

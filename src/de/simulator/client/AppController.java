@@ -4,13 +4,8 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 
-import de.simulator.client.event.AddDeviceEvent;
-import de.simulator.client.event.AddDeviceEventHandler;
-import de.simulator.client.event.ReloadDatabaseEvent;
-import de.simulator.client.event.ReloadDatabaseEventHandler;
 import de.simulator.client.presenter.Presenter;
 import de.simulator.client.presenter.SimulatorPresenter;
 import de.simulator.client.view.SimulatorView;
@@ -53,7 +48,7 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
 			Presenter presenter = null;		
 
 			if ( token.equals( "list")) {
-				presenter = new SimulatorPresenter( rpcService, eventBus, new SimulatorView());
+				presenter = new SimulatorPresenter( rpcService, eventBus, new SimulatorView( rpcService));
 			}
 
 			if ( presenter != null) {

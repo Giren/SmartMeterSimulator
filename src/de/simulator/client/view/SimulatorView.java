@@ -11,8 +11,6 @@ import gwtquery.plugins.droppable.client.gwt.DragAndDropDataGrid;
 import gwtquery.plugins.droppable.client.gwt.DroppableWidget;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.ChartTitle;
@@ -36,7 +34,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -50,6 +49,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
+import de.simulator.client.SimulatorServiceAsync;
 import de.simulator.client.presenter.SimulatorPresenter;
 import de.simulator.shared.Device;
 
@@ -61,6 +61,7 @@ public class SimulatorView extends Composite implements
 	@UiField(provided = true)
 	DroppableWidget<CellList<String>> deviceCellList;
 
+	private SimulatorServiceAsync rpcService;
 	// Panels
 	private VerticalPanel menu = new VerticalPanel();
 	private VerticalPanel mainPanel = new VerticalPanel();
@@ -88,122 +89,10 @@ public class SimulatorView extends Composite implements
 
 	ListDataProvider<String> addedDeviceList;
 
-	SingleSelectionModel<Device> selectionModelDnD;
+	private SingleSelectionModel<Device> selectionModelDnD;
 
-	// Testdaten
-	private ArrayList<Device> getDevices() {
-		ArrayList<Device> deviceList = new ArrayList<Device>();
-
-		deviceList.add(new Device("cat1", "WMF", "Mixer 400W", "Info1",
-				new Chart().createSeries().setPoints(
-						new Number[] { 100, 123, 125, 110, 115, 150, 128 })));
-		deviceList.add(new Device("cat2", "Grundig", "Kühlschrank", "Info2",
-				new Chart().createSeries().setPoints(
-						new Number[] { 90, 150, 115, 135, 120, 130, 170 })));
-		deviceList.add(new Device("cat3", "WMF", "Küchenmaschine", "Info3",
-				new Chart().createSeries().setPoints(
-						new Number[] { 95, 100, 135, 123, 140, 128, 110 })));
-		deviceList.add(new Device("cat1", "WMF", "Mixer 400W", "Info1",
-				new Chart().createSeries().setPoints(
-						new Number[] { 100, 123, 125, 110, 115, 150, 128 })));
-		deviceList.add(new Device("cat2", "Grundig", "Kühlschrank", "Info2",
-				new Chart().createSeries().setPoints(
-						new Number[] { 90, 150, 115, 135, 120, 130, 170 })));
-		deviceList.add(new Device("cat3", "WMF", "Küchenmaschine", "Info3",
-				new Chart().createSeries().setPoints(
-						new Number[] { 95, 100, 135, 123, 140, 128, 110 })));
-		deviceList.add(new Device("cat1", "WMF", "Mixer 400W", "Info1",
-				new Chart().createSeries().setPoints(
-						new Number[] { 100, 123, 125, 110, 115, 150, 128 })));
-		deviceList.add(new Device("cat2", "Grundig", "Kühlschrank", "Info2",
-				new Chart().createSeries().setPoints(
-						new Number[] { 90, 150, 115, 135, 120, 130, 170 })));
-		deviceList.add(new Device("cat3", "WMF", "Küchenmaschine", "Info3",
-				new Chart().createSeries().setPoints(
-						new Number[] { 95, 100, 135, 123, 140, 128, 110 })));
-		deviceList.add(new Device("cat1", "WMF", "Mixer 400W", "Info1",
-				new Chart().createSeries().setPoints(
-						new Number[] { 100, 123, 125, 110, 115, 150, 128 })));
-		deviceList.add(new Device("cat2", "Grundig", "Kühlschrank", "Info2",
-				new Chart().createSeries().setPoints(
-						new Number[] { 90, 150, 115, 135, 120, 130, 170 })));
-		deviceList.add(new Device("cat3", "WMF", "Küchenmaschine", "Info3",
-				new Chart().createSeries().setPoints(
-						new Number[] { 95, 100, 135, 123, 140, 128, 110 })));
-		deviceList.add(new Device("cat1", "WMF", "Mixer 400W", "Info1",
-				new Chart().createSeries().setPoints(
-						new Number[] { 100, 123, 125, 110, 115, 150, 128 })));
-		deviceList.add(new Device("cat2", "Grundig", "Kühlschrank", "Info2",
-				new Chart().createSeries().setPoints(
-						new Number[] { 90, 150, 115, 135, 120, 130, 170 })));
-		deviceList.add(new Device("cat3", "WMF", "Küchenmaschine", "Info3",
-				new Chart().createSeries().setPoints(
-						new Number[] { 95, 100, 135, 123, 140, 128, 110 })));
-		return deviceList;
-	}
-
-	private static final List<Device> DEVICES = Arrays
-			.asList(new Device("cat1", "WMF", "Mixer 400W", "Info1",
-					new Chart().createSeries().setPoints(
-							new Number[] { 100, 123, 125, 110, 115, 150, 128 })),
-					new Device("cat2", "Grundig", "Kühlschrank", "Info2",
-							new Chart().createSeries().setPoints(
-									new Number[] { 90, 150, 115, 135, 120, 130,
-											170 })),
-					new Device("cat3", "WMF", "Küchenmaschine", "Info3",
-							new Chart().createSeries().setPoints(
-									new Number[] { 95, 100, 135, 123, 140, 128,
-											110 })),
-					new Device("cat1", "WMF", "Mixer 400W", "Info1",
-							new Chart().createSeries().setPoints(
-									new Number[] { 100, 123, 125, 110, 115,
-											150, 128 })),
-					new Device("cat2", "Grundig", "Kühlschrank", "Info2",
-							new Chart().createSeries().setPoints(
-									new Number[] { 90, 150, 115, 135, 120, 130,
-											170 })),
-					new Device("cat3", "WMF", "Küchenmaschine", "Info3",
-							new Chart().createSeries().setPoints(
-									new Number[] { 95, 100, 135, 123, 140, 128,
-											110 })),
-					new Device("cat1", "WMF", "Mixer 400W", "Info1",
-							new Chart().createSeries().setPoints(
-									new Number[] { 100, 123, 125, 110, 115,
-											150, 128 })),
-					new Device("cat2", "Grundig", "Kühlschrank", "Info2",
-							new Chart().createSeries().setPoints(
-									new Number[] { 90, 150, 115, 135, 120, 130,
-											170 })),
-					new Device("cat3", "WMF", "Küchenmaschine", "Info3",
-							new Chart().createSeries().setPoints(
-									new Number[] { 95, 100, 135, 123, 140, 128,
-											110 })),
-					new Device("cat1", "WMF", "Mixer 400W", "Info1",
-							new Chart().createSeries().setPoints(
-									new Number[] { 100, 123, 125, 110, 115,
-											150, 128 })),
-					new Device("cat2", "Grundig", "Kühlschrank", "Info2",
-							new Chart().createSeries().setPoints(
-									new Number[] { 90, 150, 115, 135, 120, 130,
-											170 })),
-					new Device("cat3", "WMF", "Küchenmaschine", "Info3",
-							new Chart().createSeries().setPoints(
-									new Number[] { 95, 100, 135, 123, 140, 128,
-											110 })),
-					new Device("cat1", "WMF", "Mixer 400W", "Info1",
-							new Chart().createSeries().setPoints(
-									new Number[] { 100, 123, 125, 110, 115,
-											150, 128 })),
-					new Device("cat2", "Grundig", "Kühlschrank", "Info2",
-							new Chart().createSeries().setPoints(
-									new Number[] { 90, 150, 115, 135, 120, 130,
-											170 })),
-					new Device("cat3", "WMF", "Küchenmaschine", "Info3",
-							new Chart().createSeries().setPoints(
-									new Number[] { 95, 100, 135, 123, 140, 128,
-											110 })));
-
-	public SimulatorView() {
+	public SimulatorView(SimulatorServiceAsync rpc) {
+		this.rpcService = rpc;
 
 		channels.addSeries(series);
 		channels.setStyleName("channels");
@@ -315,60 +204,53 @@ public class SimulatorView extends Composite implements
 	private void createDeviceTableDND() {
 		DeviceDataGrid = new DragAndDropDataGrid<Device>();
 
-		// Pager
-
-		//
 		// Add a selection model so we can select cells.
 		final MultiSelectionModel<Device> selectionModel = new MultiSelectionModel<Device>();
 		DeviceDataGrid.setSelectionModel(selectionModel);
 
-		// Attach a column sort handler to the ListDataProvider to sort the
-		// list.
-		ListHandler<Device> sortHandler = new ListHandler<Device>(getDevices());
-		DeviceDataGrid.addColumnSortHandler(sortHandler);
-
 		// Initialize the columns.
 		initTableColumns(selectionModel);
 
-		DeviceDataGrid.setRowData(0, DEVICES);
-		// DeviceDataGrid.setVisible( true);
+		// Attach a column sort handler to the ListDataProvider to sort the
+		// list.
+		// ListHandler<Device> sortHandler = new
+		// ListHandler<Device>(getDevices());
+		// DeviceDataGrid.addColumnSortHandler(sortHandler);
+
 		DeviceDataGrid.setSize("100%", "300px");
 
 		// Add a selection model to handle user selection
-		// final SingleSelectionModel<Device> selectionModelDnD = new
-		// SingleSelectionModel<Device>();
 		selectionModelDnD = new SingleSelectionModel<Device>();
 		DeviceDataGrid.setSelectionModel(selectionModelDnD);
-		// selectionModelDnD
-		// .addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-		// public void onSelectionChange(SelectionChangeEvent event) {
-		// Device selected = selectionModelDnD.getSelectedObject();
-		// if (selected != null) {
-		// // Window.alert( "You selected: " +
-		// // selected.getName());
-		// preViewDevice.removeAllSeries();
-		// // preViewDevice.setTitle( new
-		// // ChartTitle().setText("Title"), new
-		// // ChartSubtitle().setText("SubTitle"));
-		// preViewDevice.setTitle(
-		// new ChartTitle().setText("Vorschau "
-		// + selected.getManufacturer() + ", "
-		// + selected.getName()), null);
-		// preViewDevice.addSeries(selected.loadProfile, true,
-		// true);
-		// }
-		// }
-		// });
 
-		// fill the helper when the drag operation start
-		DeviceDataGrid.addDragStartHandler(new DragStartEventHandler() {
+		rpcService.getDeviceList(new AsyncCallback<ArrayList<Device>>() {
 			@Override
-			public void onDragStart(
-					gwtquery.plugins.draggable.client.events.DragStartEvent event) {
-				Device device = event.getDraggableData();
-				Element helper = event.getHelper();
+			public void onFailure(Throwable caught) {
+				Window.alert("Cannot get DeviceList");
+			}
+
+			@Override
+			public void onSuccess(ArrayList<Device> result) {
+				DeviceDataGrid.setRowData(0, result);
+				// DeviceDataGrid.setVisible( true);
+				// DeviceDataGrid.setSize("100%", "300px");
+				//
+				// // Add a selection model to handle user selection
+				// selectionModelDnD = new SingleSelectionModel<Device>();
+				// DeviceDataGrid.setSelectionModel( selectionModelDnD);
+
+				// fill the helper when the drag operation start
+				DeviceDataGrid.addDragStartHandler(new DragStartEventHandler() {
+					@Override
+					public void onDragStart(
+							gwtquery.plugins.draggable.client.events.DragStartEvent event) {
+						Device device = event.getDraggableData();
+						Element helper = event.getHelper();
+					}
+				});
 			}
 		});
+
 	}
 
 	static interface Templates extends SafeHtmlTemplates {

@@ -1,25 +1,26 @@
 package de.simulator.shared;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 import org.moxieapps.gwt.highcharts.client.Series;
 
-public class Device {
-	
-	// LoadProfile hinzufügen
-	
+public class Device implements Serializable {
+
 	// Variablen Deklarationen
-	//private final int id; 
-	private final String category;
-	private final String manufacturer;
-	private final String name;
-	private final String description;
+	private String id;
+	private String category;
+	private String manufacturer;
+	private String name;
+	private String description;
+	private ArrayList<Integer> loadProfile;
+
 	
-	//private ArrayList<LoadProfile> loadProfile;
-	public Series loadProfile;
-	
-	// LoadProfile hinzufügen
+	public Device(){}
 	
 	// Konstruktor
-	public Device( String category, String manufacturer, String name, String description, Series loadProfile) {
+	public Device(String id, String category, String manufacturer, String name, String description, ArrayList<Integer> loadProfile) {
+		this.id = id;
 		this.category = category;
 		this.manufacturer = manufacturer;
 		this.name = name;
@@ -27,6 +28,18 @@ public class Device {
 		this.loadProfile = loadProfile;		
 	} // Konstruktor Device() zu
 
+	public ArrayList<Integer> getLoadProfile() {
+		return loadProfile;
+	}
+
+	public void setLoadProfile(ArrayList<Integer> loadProfile) {
+		this.loadProfile = loadProfile;
+	}
+
+	public String getID(){
+		return id;
+	}
+	
 	public String getCategory() {
 		return category;
 	}
@@ -42,6 +55,29 @@ public class Device {
 	public String getDescription() {
 		return description;
 	}	
-	
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setCategory(String category) {
+	}
+
+	public void setManufacturer(String manufacturer) {
+		this.manufacturer = manufacturer;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 }
+
