@@ -3,25 +3,30 @@ package de.simulator.client.presenter;
 import gwtquery.plugins.droppable.client.events.DropEvent;
 import gwtquery.plugins.droppable.client.events.DropEvent.DropEventHandler;
 import gwtquery.plugins.droppable.client.events.HasDropHandler;
+import gwtquery.plugins.droppable.client.gwt.DragAndDropDataGrid;
 
-import java.util.List;
-
-import javax.xml.bind.annotation.DomHandler;
+import org.moxieapps.gwt.highcharts.client.Chart;
+import org.moxieapps.gwt.highcharts.client.ChartTitle;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.dom.client.HasDropHandlers;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent.Handler;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 import de.simulator.client.SimulatorServiceAsync;
 import de.simulator.client.event.AddDeviceEvent;
+import de.simulator.client.event.AddDeviceEventHandler;
+import de.simulator.client.event.DeviceSelectionChangeEvent;
+import de.simulator.client.event.DeviceSelectionChangeEventHandler;
 import de.simulator.client.event.ReloadDatabaseEvent;
+import de.simulator.client.event.ReloadDatabaseEventHandler;
+import de.simulator.shared.Device;
 
 public class SimulatorPresenter implements Presenter {
 	private final SimulatorServiceAsync rpcService;
@@ -30,7 +35,19 @@ public class SimulatorPresenter implements Presenter {
 
 	public interface Display {
 		HasDropHandler addDevice();
+
 		HasClickHandlers reloadDatabase();
+
+		Chart getLoadProfilePreViewChart();
+
+		Chart getLoadProfileViewChart();
+
+		ListDataProvider<String> getCellList();
+
+		DragAndDropDataGrid<Device> getDeviceDataGrid();
+
+		SingleSelectionModel<Device> getSingleSelectionModel();
+
 		Widget asWidget();
 	}
 
@@ -43,6 +60,17 @@ public class SimulatorPresenter implements Presenter {
 
 	public void bind() {
 
+		// TODO
+		// Hier alle Events abhandeln, die SimulatorView() betreffen
+
+		// Event Reload Button
+		eventBus.addHandler(ReloadDatabaseEvent.TYPE,
+				new ReloadDatabaseEventHandler() {
+					public void onReloadDatabase(ReloadDatabaseEvent event) {
+						reloadDatabase();
+					}
+				});
+
 		display.reloadDatabase().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -50,14 +78,76 @@ public class SimulatorPresenter implements Presenter {
 			}
 		});
 
-		display.addDevice().addDropHandler(new DropEventHandler() {
-			
-			@Override
-			public void onDrop(DropEvent event) {
-				int id = 4711;
-				eventBus.fireEvent(new AddDeviceEvent(id));
+		// Ein Device auswählen
+		eventBus.addHandler(DeviceSelectionChangeEvent.TYPE,
+				new DeviceSelectionChangeEventHandler() {
+
+					@Override
+					public void onSelectionChange(
+							DeviceSelectionChangeEvent event) {
+						// TODO Auto-generated method stub
+						// Device selected = event.getDevice();
+						// display.getDeviceDataGrid().getSelectionModel().;
+						Window.alert("alertmessage "
+								+ event.getDevice().getName());
+						Device selected = event.getDevice();
+						if (selected != null) {
+							// Window.alert( "You selected: " +
+							// selected.getName());
+							display.getLoadProfilePreViewChart()
+									.removeAllSeries();
+							// preViewDevice.setTitle( new
+							// ChartTitle().setText("Title"), new
+							// ChartSubtitle().setText("SubTitle"));
+							display.getLoadProfilePreViewChart().setTitle(
+									new ChartTitle().setText("Vorschau "
+											+ selected.getManufacturer() + ", "
+											+ selected.getName()), null);
+							display.getLoadProfilePreViewChart().addSeries(
+									selected.loadProfile, true, true);
+						}
+					}
+				});
+
+		display.getDeviceDataGrid().getSelectionModel()
+				.addSelectionChangeHandler(new Handler() {
+
+					@Override
+					public void onSelectionChange(
+							com.google.gwt.view.client.SelectionChangeEvent event) {
+						// TODO Auto-generated method stub
+						eventBus.fireEvent(new DeviceSelectionChangeEvent(
+								display.getSingleSelectionModel()
+										.getSelectedObject()));
+					}
+
+				});
+		// Event neues Device hinzufügen
+		eventBus.addHandler(AddDeviceEvent.TYPE, new AddDeviceEventHandler() {
+			public void onAddDevice(AddDeviceEvent event) {
+				doAddNewDeviceToChart(event.getDevice());
 			}
 		});
+
+		display.addDevice().addDropHandler(new DropEventHandler() {
+
+			@Override
+			public void onDrop(DropEvent event) {
+				Device selected = event.getDraggableData();
+				eventBus.fireEvent(new AddDeviceEvent(selected));
+			}
+		});
+	}
+
+	private void reloadDatabase() {
+		Window.alert("reloadDatabase");
+	}
+
+	private void doAddNewDeviceToChart(Device device) {
+		// Window.alert( "AddNewDeviceToChart der ID:"+id);
+		display.getCellList().getList().add(device.getName());
+		display.getLoadProfileViewChart().addSeries(device.loadProfile, true,
+				true);
 	}
 
 	public void go(final HasWidgets container) {

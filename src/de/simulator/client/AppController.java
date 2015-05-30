@@ -20,8 +20,7 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
 	private final SimulatorServiceAsync rpcService;
 	private HasWidgets container;
 
-	public AppController(SimulatorServiceAsync rpcService,
-			HandlerManager eventBus) {
+	public AppController( SimulatorServiceAsync rpcService, HandlerManager eventBus) {
 		this.eventBus = eventBus;
 		this.rpcService = rpcService;
 		bind();
@@ -30,53 +29,36 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
 	private void bind() {
 		History.addValueChangeHandler(this);
 
-		eventBus.addHandler(ReloadDatabaseEvent.TYPE,
-				new ReloadDatabaseEventHandler() {
-					public void onReloadDatabase(ReloadDatabaseEvent event) {
-						reloadDatabase();
-					}
-				});
-
-		eventBus.addHandler(AddDeviceEvent.TYPE, new AddDeviceEventHandler() {
-			public void onAddDevice(AddDeviceEvent event) {
-				doAddNewDeviceToChart(event.getID());
-			}
-		});
+		// TODO 
+		// Hier alle globalen Events abhandeln, welche eine Umschaltung der View zur Folge haben
 	}
 
-	private void reloadDatabase() {
-		Window.alert("reloadDatabase");
-	}
 
-	private void doAddNewDeviceToChart(int id) {
-		Window.alert("AddNewDeviceToChart der ID:"+id);
-	}
 
 	@Override
-	public void go(HasWidgets container) {
+	public void go( HasWidgets container) {
 		this.container = container;
 
-		if ("".equals(History.getToken())) {
-			History.newItem("list");
+		if ( "".equals(History.getToken())) {
+			History.newItem( "list");
 		} else {
 			History.fireCurrentHistoryState();
 		}
 	}
 
-	public void onValueChange(ValueChangeEvent<String> event) {
+	public void onValueChange( ValueChangeEvent<String> event) {
 		String token = event.getValue();
 
-		if (token != null) {
-			Presenter presenter = null;
+		if ( token != null) {
+			Presenter presenter = null;		
 
-			if (token.equals("list")) {
-				presenter = new SimulatorPresenter(rpcService, eventBus,
-						new SimulatorView());
+			if ( token.equals( "list")) {
+				presenter = new SimulatorPresenter( rpcService, eventBus, new SimulatorView());
 			}
 
-			if (presenter != null) {
-				presenter.go(container);
-			}
-		}
-	}
+			if ( presenter != null) {
+				presenter.go( container);
+			} 
+		} // if close
+	} // onValueChange() close
 }

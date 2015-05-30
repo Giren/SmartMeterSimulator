@@ -10,10 +10,9 @@ import gwtquery.plugins.droppable.client.gwt.DragAndDropColumn;
 import gwtquery.plugins.droppable.client.gwt.DragAndDropDataGrid;
 import gwtquery.plugins.droppable.client.gwt.DroppableWidget;
 
-import com.google.gwt.event.dom.client.*;
-import com.google.gwt.user.client.ui.*;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.ChartTitle;
@@ -50,9 +49,9 @@ import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
-import com.sun.corba.se.pept.transport.ContactInfo;
 
 import de.simulator.client.presenter.SimulatorPresenter;
+import de.simulator.shared.Device;
 
 public class SimulatorView extends Composite implements
 		SimulatorPresenter.Display {
@@ -86,6 +85,10 @@ public class SimulatorView extends Composite implements
 	Series preViewSeries = preViewDevice.createSeries()
 			.setName("Leistungsaufnahme des Geraets")
 			.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
+
+	ListDataProvider<String> addedDeviceList;
+
+	SingleSelectionModel<Device> selectionModelDnD;
 
 	// Testdaten
 	private ArrayList<Device> getDevices() {
@@ -222,7 +225,7 @@ public class SimulatorView extends Composite implements
 		menu.addStyleName("menu");
 
 		mainPanel.add(configPanel);
-		mainPanel.add(channels);
+		// mainPanel.add(channels);
 		mainPanel.addStyleName("mainpanel");
 
 		LoadProfilePanel.addStyleName("configPanel");
@@ -231,7 +234,10 @@ public class SimulatorView extends Composite implements
 		LoadProfilePanel.add(deviceCellList);
 		LoadProfilePanel.setCellWidth(deviceCellList, "20%");
 		// 2. Spalte FinalLoadProfile anzeigen
+		// LoadProfilePanel.add( new LoadProfileView());
 		LoadProfilePanel.add(channels);
+		LoadProfilePanel.setCellWidth(channels, "80%");
+
 		LoadProfilePanel.setCellWidth(channels, "80%");
 		mainPanel.add(LoadProfilePanel);
 
@@ -277,13 +283,33 @@ public class SimulatorView extends Composite implements
 	public HasClickHandlers reloadDatabase() {
 		return reloadButton;
 	}
-	
+
 	public HasDropHandler addDevice() {
 		return deviceCellList;
 	}
-	
+
 	public Widget asWidget() {
 		return this;
+	}
+
+	public Chart getLoadProfilePreViewChart() {
+		return this.preViewDevice;
+	}
+
+	public Chart getLoadProfileViewChart() {
+		return this.channels;
+	}
+
+	public ListDataProvider<String> getCellList() {
+		return this.addedDeviceList;
+	}
+
+	public DragAndDropDataGrid<Device> getDeviceDataGrid() {
+		return this.DeviceDataGrid;
+	}
+
+	public SingleSelectionModel<Device> getSingleSelectionModel() {
+		return this.selectionModelDnD;
 	}
 
 	private void createDeviceTableDND() {
@@ -309,28 +335,30 @@ public class SimulatorView extends Composite implements
 		DeviceDataGrid.setSize("100%", "300px");
 
 		// Add a selection model to handle user selection
-		final SingleSelectionModel<Device> selectionModelDnD = new SingleSelectionModel<Device>();
+		// final SingleSelectionModel<Device> selectionModelDnD = new
+		// SingleSelectionModel<Device>();
+		selectionModelDnD = new SingleSelectionModel<Device>();
 		DeviceDataGrid.setSelectionModel(selectionModelDnD);
-		selectionModelDnD
-				.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-					public void onSelectionChange(SelectionChangeEvent event) {
-						Device selected = selectionModelDnD.getSelectedObject();
-						if (selected != null) {
-							// Window.alert( "You selected: " +
-							// selected.getName());
-							preViewDevice.removeAllSeries();
-							// preViewDevice.setTitle( new
-							// ChartTitle().setText("Title"), new
-							// ChartSubtitle().setText("SubTitle"));
-							preViewDevice.setTitle(
-									new ChartTitle().setText("Vorschau "
-											+ selected.getManufacturer() + ", "
-											+ selected.getName()), null);
-							preViewDevice.addSeries(selected.loadProfile, true,
-									true);
-						}
-					}
-				});
+		// selectionModelDnD
+		// .addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+		// public void onSelectionChange(SelectionChangeEvent event) {
+		// Device selected = selectionModelDnD.getSelectedObject();
+		// if (selected != null) {
+		// // Window.alert( "You selected: " +
+		// // selected.getName());
+		// preViewDevice.removeAllSeries();
+		// // preViewDevice.setTitle( new
+		// // ChartTitle().setText("Title"), new
+		// // ChartSubtitle().setText("SubTitle"));
+		// preViewDevice.setTitle(
+		// new ChartTitle().setText("Vorschau "
+		// + selected.getManufacturer() + ", "
+		// + selected.getName()), null);
+		// preViewDevice.addSeries(selected.loadProfile, true,
+		// true);
+		// }
+		// }
+		// });
 
 		// fill the helper when the drag operation start
 		DeviceDataGrid.addDragStartHandler(new DragStartEventHandler() {
@@ -426,9 +454,6 @@ public class SimulatorView extends Composite implements
 		DeviceDataGrid.addColumn(descriptionColumn, "Beschreibung");
 	}
 
-	private static final List<String> DAYS = Arrays.asList("Sunday", "Monday",
-			"Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
-
 	private void createDroppableList() {
 		// Create a ConcactCell
 		// DeviceCell deviceCell = new DeviceCell(Resource.INSTANCE.contact());
@@ -446,7 +471,7 @@ public class SimulatorView extends Composite implements
 		// cellList.setPageSize(30);
 		// cellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
 		// temporary ListDataProvider to keep list of contacts to delete
-		final ListDataProvider<String> addedDeviceList = new ListDataProvider<String>();
+		addedDeviceList = new ListDataProvider<String>();
 
 		addedDeviceList.addDataDisplay(cellList);
 		// cellList.setRowData(0, DAYS);
@@ -457,19 +482,20 @@ public class SimulatorView extends Composite implements
 		// setup the drop operation
 		// deviceCellList.setDroppableHoverClass(Resource.INSTANCE.css().droppableHover());
 		// deviceCellList.setActiveClass(Resource.INSTANCE.css().droppableActive());
-		deviceCellList.addDropHandler(new DropEventHandler() {
 
-			@Override
-			public void onDrop(
-					gwtquery.plugins.droppable.client.events.DropEvent event) {
-				Device deviceToAdd = event.getDraggableData();
-				// first remove the contact to the table
-
-				addedDeviceList.getList().add(deviceToAdd.getName());
-				channels.addSeries(deviceToAdd.loadProfile);
-
-			}
-		});
+		// deviceCellList.addDropHandler(new DropEventHandler() {
+		//
+		// @Override
+		// public void onDrop(
+		// gwtquery.plugins.droppable.client.events.DropEvent event) {
+		// Device deviceToAdd = event.getDraggableData();
+		// // first remove the contact to the table
+		//
+		// addedDeviceList.getList().add(deviceToAdd.getName());
+		// channels.addSeries(deviceToAdd.loadProfile, true, true);
+		//
+		// }
+		// });
 	}
 
 	private static class DeviceCell extends AbstractCell<Device> {

@@ -1,4 +1,4 @@
-package de.simulator.client.view;
+package de.simulator.shared;
 
 import org.moxieapps.gwt.highcharts.client.Series;
 
@@ -7,13 +7,14 @@ public class Device {
 	// LoadProfile hinzufügen
 	
 	// Variablen Deklarationen
+	//private final int id; 
 	private final String category;
 	private final String manufacturer;
 	private final String name;
 	private final String description;
 	
 	//private ArrayList<LoadProfile> loadProfile;
-	Series loadProfile;
+	public Series loadProfile;
 	
 	// LoadProfile hinzufügen
 	
