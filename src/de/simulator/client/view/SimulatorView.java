@@ -13,7 +13,6 @@ import gwtquery.plugins.droppable.client.gwt.DroppableWidget;
 import java.util.ArrayList;
 
 import org.moxieapps.gwt.highcharts.client.Chart;
-import org.moxieapps.gwt.highcharts.client.ChartTitle;
 import org.moxieapps.gwt.highcharts.client.Series;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -45,12 +44,12 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import de.simulator.client.SimulatorServiceAsync;
 import de.simulator.client.presenter.SimulatorPresenter;
+import de.simulator.client.widgets.LoadProfileChartWidget;
 import de.simulator.shared.Device;
 
 public class SimulatorView extends Composite implements
@@ -96,7 +95,7 @@ public class SimulatorView extends Composite implements
 
 		channels.addSeries(series);
 		channels.setStyleName("channels");
-
+		
 		preViewDevice.addSeries(preViewSeries);
 		preViewDevice.setStyleName("preViewDevice");
 
@@ -124,10 +123,18 @@ public class SimulatorView extends Composite implements
 		LoadProfilePanel.setCellWidth(deviceCellList, "20%");
 		// 2. Spalte FinalLoadProfile anzeigen
 		// LoadProfilePanel.add( new LoadProfileView());
-		LoadProfilePanel.add(channels);
-		LoadProfilePanel.setCellWidth(channels, "80%");
+		
+			
 
-		LoadProfilePanel.setCellWidth(channels, "80%");
+		//LoadProfilePanel.add(channels);
+		//LoadProfilePanel.setCellWidth(channels, "80%");
+		
+		LoadProfileChartWidget mychart = new LoadProfileChartWidget( "title");	
+		mychart.addSeries( series );
+		channels = mychart.getLoadProfileChart();
+		LoadProfilePanel.add( mychart);
+		LoadProfilePanel.setCellWidth( mychart, "80%");
+		
 		mainPanel.add(LoadProfilePanel);
 
 		browserPanel.add(menu);
