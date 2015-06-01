@@ -1,5 +1,6 @@
 package de.simulator.client.presenter;
 
+import gwtquery.plugins.draggable.client.events.DragStartEvent.DragStartEventHandler;
 import gwtquery.plugins.droppable.client.events.DropEvent;
 import gwtquery.plugins.droppable.client.events.DropEvent.DropEventHandler;
 import gwtquery.plugins.droppable.client.events.HasDropHandler;
@@ -7,16 +8,34 @@ import gwtquery.plugins.droppable.client.gwt.DragAndDropDataGrid;
 
 import java.util.ArrayList;
 
+import javax.xml.transform.Templates;
+
+import org.eclipse.jdt.internal.compiler.parser.diagnose.DiagnoseParser;
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.ChartTitle;
 import org.moxieapps.gwt.highcharts.client.Series;
 
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.ImageBundle.Resource;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
@@ -29,6 +48,7 @@ import de.simulator.client.event.DeviceSelectionChangeEvent;
 import de.simulator.client.event.DeviceSelectionChangeEventHandler;
 import de.simulator.client.event.ReloadDatabaseEvent;
 import de.simulator.client.event.ReloadDatabaseEventHandler;
+import de.simulator.client.view.DeviceDialogView;
 import de.simulator.shared.Device;
 
 public class SimulatorPresenter implements Presenter {
@@ -86,19 +106,10 @@ public class SimulatorPresenter implements Presenter {
 					@Override
 					public void onSelectionChange(
 							DeviceSelectionChangeEvent event) {
-						// Device selected = event.getDevice();
-						// display.getDeviceDataGrid().getSelectionModel().;
-						// Window.alert("alertmessage " +
-						// event.getDevice().getName());
 						Device selected = event.getDevice();
 						if (selected != null) {
-							// Window.alert( "You selected: " +
-							// selected.getName());
 							display.getLoadProfilePreViewChart()
 									.removeAllSeries();
-							// preViewDevice.setTitle( new
-							// ChartTitle().setText("Title"), new
-							// ChartSubtitle().setText("SubTitle"));
 							display.getLoadProfilePreViewChart().setTitle(
 									new ChartTitle().setText("Vorschau "
 											+ selected.getManufacturer() + ", "
@@ -111,7 +122,6 @@ public class SimulatorPresenter implements Presenter {
 						}
 					}
 				});
-
 		display.getDeviceDataGrid().getSelectionModel()
 				.addSelectionChangeHandler(new Handler() {
 
@@ -125,15 +135,16 @@ public class SimulatorPresenter implements Presenter {
 					}
 
 				});
+		
 		// Event neues Device hinzufügen
 		eventBus.addHandler(AddDeviceEvent.TYPE, new AddDeviceEventHandler() {
 			public void onAddDevice(AddDeviceEvent event) {
 				doAddNewDeviceToChart(event.getDevice());
+				//showDeviceWindow(event.getDevice());
 			}
 		});
 
 		display.addDevice().addDropHandler(new DropEventHandler() {
-
 			@Override
 			public void onDrop(DropEvent event) {
 				Device selected = event.getDraggableData();
@@ -147,10 +158,15 @@ public class SimulatorPresenter implements Presenter {
 	}
 
 	private void doAddNewDeviceToChart(Device device) {
-		// Window.alert( "AddNewDeviceToChart der ID:"+id);
 		display.getCellList().getList().add(device.getName());
 		display.getLoadProfileViewChart().addSeries(
 				arrayListToSeries(device.getLoadProfile()), true, true);
+		showDeviceWindow(device);
+	}
+	
+	private void showDeviceWindow(Device device) {
+		DeviceDialogPresenter dialogPresenter = new DeviceDialogPresenter(eventBus, new DeviceDialogView());
+		dialogPresenter.go(device);
 	}
 
 	private Series arrayListToSeries(ArrayList<Integer> arrayList) {
@@ -164,9 +180,33 @@ public class SimulatorPresenter implements Presenter {
 		return newSeries;
 	}
 
+	private void initDeviceDataGrid() {
+		rpcService.getDeviceList(new AsyncCallback<ArrayList<Device>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("Cannot get DeviceList");
+			}
+
+			@Override
+			public void onSuccess(ArrayList<Device> result) {
+				display.getDeviceDataGrid().setRowData(0, result);
+				display.getDeviceDataGrid().addDragStartHandler(
+						new DragStartEventHandler() {
+							@Override
+							public void onDragStart(
+									gwtquery.plugins.draggable.client.events.DragStartEvent event) {
+								Device device = event.getDraggableData();
+								Element helper = event.getHelper();
+							}
+						});
+			}
+		});
+	}
+
 	public void go(final HasWidgets container) {
 		bind();
 		container.clear();
 		container.add(display.asWidget());
+		initDeviceDataGrid();
 	}
 }

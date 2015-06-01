@@ -6,6 +6,7 @@
 	<inherits name="gwtquery.plugins.draggable.Draggable"/>
 	<inherits name="gwtquery.plugins.droppable.Droppable"/>
 	<inherits name="org.moxieapps.gwt.highcharts.Highcharts"/> 
+	<inherits name='com.kiouri.sliderbar.SliderBarMVP' />
 	<source path="client" />
 	<source path="shared" />
 	<source path="server" />	

@@ -12,9 +12,11 @@ import gwtquery.plugins.droppable.client.gwt.DroppableWidget;
 
 import java.util.ArrayList;
 
-import org.moxieapps.gwt.highcharts.client.Chart;
+import org.moxieapps.gwt.highcharts.client.*;
 import org.moxieapps.gwt.highcharts.client.ChartTitle;
 import org.moxieapps.gwt.highcharts.client.Series;
+import org.moxieapps.gwt.highcharts.client.StockChart;
+import org.moxieapps.gwt.highcharts.client.plotOptions.FlagPlotOptions;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.TextCell;
@@ -56,11 +58,6 @@ import de.simulator.shared.Device;
 public class SimulatorView extends Composite implements
 		SimulatorPresenter.Display {
 
-	DragAndDropDataGrid<Device> DeviceDataGrid;
-
-	@UiField(provided = true)
-	DroppableWidget<CellList<String>> deviceCellList;
-
 	private SimulatorServiceAsync rpcService;
 	// Panels
 	private VerticalPanel menu = new VerticalPanel();
@@ -77,8 +74,6 @@ public class SimulatorView extends Composite implements
 			.setChartTitleText("Lastgang").setMarginRight(10);
 	private Chart preViewDevice = new Chart().setType(Series.Type.SPLINE)
 			.setChartTitleText("Vorschau").setMarginRight(10);
-	// Label
-	private Label testLabel = new Label("test");
 	// Punktmenge
 	Series series = channels.createSeries().setName("Leistungsaufnahme")
 			.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
@@ -86,18 +81,19 @@ public class SimulatorView extends Composite implements
 	Series preViewSeries = preViewDevice.createSeries()
 			.setName("Leistungsaufnahme des Geraets")
 			.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
-
-	ListDataProvider<String> addedDeviceList;
-
+	// Grid
+	private DragAndDropDataGrid<Device> DeviceDataGrid;
+	// CellList
+	@UiField(provided = true)
+	private DroppableWidget<CellList<String>> deviceCellList;
+	//Variables
 	private SingleSelectionModel<Device> selectionModelDnD;
-
+	private ListDataProvider<String> addedDeviceList;
+	
 	public SimulatorView(SimulatorServiceAsync rpc) {
 		this.rpcService = rpc;
 
-		channels.addSeries(series);
 		channels.setStyleName("channels");
-
-		preViewDevice.addSeries(preViewSeries);
 		preViewDevice.setStyleName("preViewDevice");
 
 		createDeviceTableDND();
@@ -114,7 +110,6 @@ public class SimulatorView extends Composite implements
 		menu.addStyleName("menu");
 
 		mainPanel.add(configPanel);
-		// mainPanel.add(channels);
 		mainPanel.addStyleName("mainpanel");
 
 		LoadProfilePanel.addStyleName("configPanel");
@@ -136,36 +131,6 @@ public class SimulatorView extends Composite implements
 		browserPanel.setCellWidth(mainPanel, "100%");
 
 		initWidget(browserPanel);
-
-		testLabel.addDragStartHandler(new DragStartHandler() {
-
-			@Override
-			public void onDragStart(DragStartEvent event) { // required
-				event.setData("text", "Hello World");
-			}
-		});
-
-		deviceCellList.addDomHandler(new DropHandler() {
-			public void onDrop(DropEvent event) {
-				series.addPoint(7, 100);
-			}
-		}, DropEvent.getType());
-
-		deviceCellList.addDropHandler(new DropEventHandler() {
-			@Override
-			public void onDrop(
-					gwtquery.plugins.droppable.client.events.DropEvent event) {
-				Device dev = event.getDraggableData();
-				// series.addPoint(7, 100);
-				// first remove the contact to the table
-			}
-		});
-
-		deviceCellList.addDomHandler(new DragOverHandler() {
-			public void onDragOver(DragOverEvent event) {
-			}
-		}, DragOverEvent.getType());
-
 	}
 
 	@Override
@@ -211,46 +176,11 @@ public class SimulatorView extends Composite implements
 		// Initialize the columns.
 		initTableColumns(selectionModel);
 
-		// Attach a column sort handler to the ListDataProvider to sort the
-		// list.
-		// ListHandler<Device> sortHandler = new
-		// ListHandler<Device>(getDevices());
-		// DeviceDataGrid.addColumnSortHandler(sortHandler);
-
 		DeviceDataGrid.setSize("100%", "300px");
 
 		// Add a selection model to handle user selection
 		selectionModelDnD = new SingleSelectionModel<Device>();
 		DeviceDataGrid.setSelectionModel(selectionModelDnD);
-
-		rpcService.getDeviceList(new AsyncCallback<ArrayList<Device>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert("Cannot get DeviceList");
-			}
-
-			@Override
-			public void onSuccess(ArrayList<Device> result) {
-				DeviceDataGrid.setRowData(0, result);
-				// DeviceDataGrid.setVisible( true);
-				// DeviceDataGrid.setSize("100%", "300px");
-				//
-				// // Add a selection model to handle user selection
-				// selectionModelDnD = new SingleSelectionModel<Device>();
-				// DeviceDataGrid.setSelectionModel( selectionModelDnD);
-
-				// fill the helper when the drag operation start
-				DeviceDataGrid.addDragStartHandler(new DragStartEventHandler() {
-					@Override
-					public void onDragStart(
-							gwtquery.plugins.draggable.client.events.DragStartEvent event) {
-						Device device = event.getDraggableData();
-						Element helper = event.getHelper();
-					}
-				});
-			}
-		});
-
 	}
 
 	static interface Templates extends SafeHtmlTemplates {
@@ -360,32 +290,9 @@ public class SimulatorView extends Composite implements
 		// make the cell list droppable.
 		deviceCellList = new DroppableWidget<CellList<String>>(cellList);
 		deviceCellList.setWidth("100%");
-
-		// setup the drop operation
-		// deviceCellList.setDroppableHoverClass(Resource.INSTANCE.css().droppableHover());
-		// deviceCellList.setActiveClass(Resource.INSTANCE.css().droppableActive());
-
-		// deviceCellList.addDropHandler(new DropEventHandler() {
-		//
-		// @Override
-		// public void onDrop(
-		// gwtquery.plugins.droppable.client.events.DropEvent event) {
-		// Device deviceToAdd = event.getDraggableData();
-		// // first remove the contact to the table
-		//
-		// addedDeviceList.getList().add(deviceToAdd.getName());
-		// channels.addSeries(deviceToAdd.loadProfile, true, true);
-		//
-		// }
-		// });
 	}
 
 	private static class DeviceCell extends AbstractCell<Device> {
-
-		/**
-		 * The html of the image used for contacts.
-		 * 
-		 */
 		private final String imageHtml;
 
 		public DeviceCell(ImageResource image) {
@@ -412,7 +319,6 @@ public class SimulatorView extends Composite implements
 			sb.appendHtmlConstant("</td></tr><tr><td>");
 			sb.appendEscaped(value.getManufacturer());
 			sb.appendHtmlConstant("</td></tr></table>");
-
 		}
 	}
 }
