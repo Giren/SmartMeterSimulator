@@ -44,6 +44,7 @@ public class DeviceDialogPresenter {
 	private final Display display;
 	private DialogBox dialogBox;
 	private int sliderValue;
+	private Device currentDevice;
 
 	public DeviceDialogPresenter(HandlerManager eventBus, Display display) {
 		this.eventBus = eventBus;
@@ -97,6 +98,7 @@ public class DeviceDialogPresenter {
 	}
 
 	public void go(Device device) {
+		this.currentDevice = device;
 		this.display.getCategory().setValue(device.getCategory());
 		this.display.getDeviceDescription().setValue(device.getDescription());
 		this.display.getDeviceName().setValue(device.getName());

@@ -14,7 +14,7 @@ public class KDEHorizontalLeftBW extends SliderBarHorizontal {
 
 	public KDEHorizontalLeftBW(int maxValue, String width) {
 		setLessWidget(new Image(images.less()));
-		setMoreWidget(new Image(images.more()));
+		//setMoreWidget(new Image(images.more()));
 		setScaleWidget(new Image(images.scale().getUrl()), 16);
 		setMoreWidget(new Image(images.more()));
 		setDragWidget(new Image(images.drag()));

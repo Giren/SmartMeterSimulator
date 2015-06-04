@@ -48,11 +48,7 @@ public class DeviceDialogView extends Composite implements DeviceDialogPresenter
 	public DeviceDialogView() {
 
 		sliderBarSimpleHorizontel = new SliderBarSimpleHorizontal(100, "700px",  true);
-//		sliderBarSimpleHorizontel.addBarValueChangedHandler(new BarValueChangedHandler() {
-//                public void onBarValueChanged(BarValueChangedEvent event) {
-//                        
-//                }
-//        });
+
 		sliderBarSimpleHorizontel.drawMarks("white",6);
 		sliderBarSimpleHorizontel.setMinMarkStep(1);
 		sliderBarSimpleHorizontel.setNotSelectedInFocus();
