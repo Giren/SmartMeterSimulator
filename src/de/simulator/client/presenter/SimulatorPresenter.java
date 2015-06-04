@@ -8,34 +8,19 @@ import gwtquery.plugins.droppable.client.gwt.DragAndDropDataGrid;
 
 import java.util.ArrayList;
 
-import javax.xml.transform.Templates;
-
-import org.eclipse.jdt.internal.compiler.parser.diagnose.DiagnoseParser;
 import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.ChartTitle;
 import org.moxieapps.gwt.highcharts.client.Series;
 
-import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.ImageBundle.Resource;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
@@ -49,7 +34,10 @@ import de.simulator.client.event.DeviceSelectionChangeEventHandler;
 import de.simulator.client.event.ReloadDatabaseEvent;
 import de.simulator.client.event.ReloadDatabaseEventHandler;
 import de.simulator.client.view.DeviceDialogView;
+import de.simulator.client.view.MyResources;
+import de.simulator.client.view.SimulatorView;
 import de.simulator.shared.Device;
+import de.simulator.shared.SimulatorDevice;
 
 public class SimulatorPresenter implements Presenter {
 	private final SimulatorServiceAsync rpcService;
@@ -65,12 +53,14 @@ public class SimulatorPresenter implements Presenter {
 
 		Chart getLoadProfileViewChart();
 
-		ListDataProvider<String> getCellList();
+		ListDataProvider<Device> getCellList();
 
 		DragAndDropDataGrid<Device> getDeviceDataGrid();
 
 		SingleSelectionModel<Device> getSingleSelectionModel();
 
+		SimulatorDevice getSimulatorDevice();
+		
 		Widget asWidget();
 	}
 
@@ -139,7 +129,10 @@ public class SimulatorPresenter implements Presenter {
 		// Event neues Device hinzufügen
 		eventBus.addHandler(AddDeviceEvent.TYPE, new AddDeviceEventHandler() {
 			public void onAddDevice(AddDeviceEvent event) {
-				doAddNewDeviceToChart(event.getDevice());
+				//doAddNewDeviceToChart(event.getDevice());
+				display.getCellList().getList().add( event.getDevice());
+				display.getLoadProfileViewChart().addSeries(
+						arrayListToSeries( event.getDevice().getLoadProfile()), true, true);
 				//showDeviceWindow(event.getDevice());
 			}
 		});
@@ -148,19 +141,22 @@ public class SimulatorPresenter implements Presenter {
 			@Override
 			public void onDrop(DropEvent event) {
 				Device selected = event.getDraggableData();
-				eventBus.fireEvent(new AddDeviceEvent(selected));
+				doAddNewDeviceToChart( selected);
+				//eventBus.fireEvent(new AddDeviceEvent(selected));
 			}
 		});
 	}
+
 
 	private void reloadDatabase() {
 		Window.alert("reloadDatabase");
 	}
 
 	private void doAddNewDeviceToChart(Device device) {
-		display.getCellList().getList().add(device.getName());
-		display.getLoadProfileViewChart().addSeries(
-				arrayListToSeries(device.getLoadProfile()), true, true);
+		//display.getCellList().getList().add(device.getName());
+		//display.getCellList().getList().add( device);
+		//display.getLoadProfileViewChart().addSeries(
+		//		arrayListToSeries(device.getLoadProfile()), true, true);
 		showDeviceWindow(device);
 	}
 	
@@ -197,6 +193,11 @@ public class SimulatorPresenter implements Presenter {
 									gwtquery.plugins.draggable.client.events.DragStartEvent event) {
 								Device device = event.getDraggableData();
 								Element helper = event.getHelper();
+								
+								SafeHtmlBuilder sb = new SafeHtmlBuilder();
+						        // reuse the contact cell to render the inner html of the drag helper.
+						        new SimulatorView.DeviceCell( MyResources.INSTANCE.deviceImage()).render(null, device, sb);
+						        helper.setInnerHTML(sb.toSafeHtml().asString());
 							}
 						});
 			}

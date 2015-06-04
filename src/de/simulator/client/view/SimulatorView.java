@@ -3,32 +3,18 @@ package de.simulator.client.view;
 import static com.google.gwt.query.client.GQuery.$;
 import gwtquery.plugins.draggable.client.DraggableOptions;
 import gwtquery.plugins.draggable.client.DraggableOptions.RevertOption;
-import gwtquery.plugins.draggable.client.events.DragStartEvent.DragStartEventHandler;
-import gwtquery.plugins.droppable.client.events.DropEvent.DropEventHandler;
 import gwtquery.plugins.droppable.client.events.HasDropHandler;
 import gwtquery.plugins.droppable.client.gwt.DragAndDropColumn;
 import gwtquery.plugins.droppable.client.gwt.DragAndDropDataGrid;
 import gwtquery.plugins.droppable.client.gwt.DroppableWidget;
 
-import java.util.ArrayList;
-
-import org.moxieapps.gwt.highcharts.client.*;
-import org.moxieapps.gwt.highcharts.client.ChartTitle;
+import org.moxieapps.gwt.highcharts.client.Chart;
 import org.moxieapps.gwt.highcharts.client.Series;
-import org.moxieapps.gwt.highcharts.client.StockChart;
-import org.moxieapps.gwt.highcharts.client.plotOptions.FlagPlotOptions;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.event.dom.client.DragOverEvent;
-import com.google.gwt.event.dom.client.DragOverHandler;
-import com.google.gwt.event.dom.client.DragStartEvent;
-import com.google.gwt.event.dom.client.DragStartHandler;
-import com.google.gwt.event.dom.client.DropEvent;
-import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -36,44 +22,45 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import de.simulator.client.SimulatorServiceAsync;
 import de.simulator.client.presenter.SimulatorPresenter;
+import de.simulator.client.widgets.LoadProfileChartWidget;
 import de.simulator.shared.Device;
+import de.simulator.shared.SimulatorDevice;
 
-public class SimulatorView extends Composite implements
-		SimulatorPresenter.Display {
+public class SimulatorView extends Composite implements SimulatorPresenter.Display {
 
 	private SimulatorServiceAsync rpcService;
+	
 	// Panels
 	private VerticalPanel menu = new VerticalPanel();
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private HorizontalPanel browserPanel = new HorizontalPanel();
 	private HorizontalPanel configPanel = new HorizontalPanel();
 	private HorizontalPanel LoadProfilePanel = new HorizontalPanel();
+	
 	// Buttons
 	private Button reloadButton = new Button("reload");
 	private Button runButton = new Button("run");
 	private Button pushButton = new Button("push");
+	
 	// Charts
 	private Chart channels = new Chart().setType(Series.Type.SPLINE)
 			.setChartTitleText("Lastgang").setMarginRight(10);
 	private Chart preViewDevice = new Chart().setType(Series.Type.SPLINE)
 			.setChartTitleText("Vorschau").setMarginRight(10);
+	
 	// Punktmenge
 	Series series = channels.createSeries().setName("Leistungsaufnahme")
 			.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
@@ -81,19 +68,30 @@ public class SimulatorView extends Composite implements
 	Series preViewSeries = preViewDevice.createSeries()
 			.setName("Leistungsaufnahme des Geraets")
 			.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
+	
 	// Grid
 	private DragAndDropDataGrid<Device> DeviceDataGrid;
+	
 	// CellList
 	@UiField(provided = true)
-	private DroppableWidget<CellList<String>> deviceCellList;
+//	private DroppableWidget<CellList<String>> deviceCellList;
+	private DroppableWidget<CellList<Device>> deviceCellList;
+	
 	//Variables
 	private SingleSelectionModel<Device> selectionModelDnD;
-	private ListDataProvider<String> addedDeviceList;
+//	private ListDataProvider<String> addedDeviceList;
+	private ListDataProvider<Device> addedDeviceList;
+	
+	// Divers
+	SimulatorDevice simulatorDevice = new SimulatorDevice();
 	
 	public SimulatorView(SimulatorServiceAsync rpc) {
 		this.rpcService = rpc;
 
 		channels.setStyleName("channels");
+	
+		preViewDevice.addSeries(preViewSeries);
+
 		preViewDevice.setStyleName("preViewDevice");
 
 		createDeviceTableDND();
@@ -116,13 +114,21 @@ public class SimulatorView extends Composite implements
 		createDroppableList();
 		// 1. Spalte CellList anzeigen
 		LoadProfilePanel.add(deviceCellList);
-		LoadProfilePanel.setCellWidth(deviceCellList, "20%");
+		LoadProfilePanel.setCellWidth(deviceCellList, "15%");
 		// 2. Spalte FinalLoadProfile anzeigen
 		// LoadProfilePanel.add( new LoadProfileView());
-		LoadProfilePanel.add(channels);
-		LoadProfilePanel.setCellWidth(channels, "80%");
+		
+			
 
-		LoadProfilePanel.setCellWidth(channels, "80%");
+		//LoadProfilePanel.add(channels);
+		//LoadProfilePanel.setCellWidth(channels, "80%");
+		
+		LoadProfileChartWidget mychart = new LoadProfileChartWidget( "title");	
+		mychart.addSeries( series );
+		channels = mychart.getLoadProfileChart();
+		LoadProfilePanel.add( mychart);
+		//LoadProfilePanel.setCellWidth( mychart, "80%");
+		
 		mainPanel.add(LoadProfilePanel);
 
 		browserPanel.add(menu);
@@ -154,7 +160,7 @@ public class SimulatorView extends Composite implements
 		return this.channels;
 	}
 
-	public ListDataProvider<String> getCellList() {
+	public ListDataProvider<Device> getCellList() {
 		return this.addedDeviceList;
 	}
 
@@ -164,6 +170,10 @@ public class SimulatorView extends Composite implements
 
 	public SingleSelectionModel<Device> getSingleSelectionModel() {
 		return this.selectionModelDnD;
+	}
+	
+	public SimulatorDevice getSimulatorDevice() {
+		return this.simulatorDevice;
 	}
 
 	private void createDeviceTableDND() {
@@ -266,33 +276,34 @@ public class SimulatorView extends Composite implements
 		DeviceDataGrid.addColumn(descriptionColumn, "Beschreibung");
 	}
 
+
 	private void createDroppableList() {
-		// Create a ConcactCell
-		// DeviceCell deviceCell = new DeviceCell(Resource.INSTANCE.contact());
-		// Create a cell to render each value.
-		TextCell deviceCell = new TextCell();
+		// Create a DeviceCell to render each device.
+		DeviceCell deviceCell = new DeviceCell( MyResources.INSTANCE.deviceImage());
 
 		// Create a CellList that uses the deviceCell
-		// CellList<Device> cellList = new CellList<Device>(deviceCell);
-		CellList<String> cellList = new CellList<String>(deviceCell);
-		cellList.setWidth("100%");
-		cellList.setStyleName("browserpanel");
-
-		// cellList.addStyleName(Resource.INSTANCE.css().exportCellList());
+		CellList<Device> cellList = new CellList<Device>(deviceCell);
+		//cellList.setWidth("100%");
+		cellList.setStyleName("exportCellList");
 
 		// cellList.setPageSize(30);
 		// cellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
 		// temporary ListDataProvider to keep list of contacts to delete
-		addedDeviceList = new ListDataProvider<String>();
+		addedDeviceList = new ListDataProvider<Device>();
 
 		addedDeviceList.addDataDisplay(cellList);
-		// cellList.setRowData(0, DAYS);
+
 		// make the cell list droppable.
-		deviceCellList = new DroppableWidget<CellList<String>>(cellList);
-		deviceCellList.setWidth("100%");
+		deviceCellList = new DroppableWidget<CellList<Device>>(cellList);
+		deviceCellList.setDroppableHoverClass( "droppableHover");
+		deviceCellList.setActiveClass( "droppableActive");
+		//deviceCellList.setWidth("90%");
 	}
 
-	private static class DeviceCell extends AbstractCell<Device> {
+	
+	// Beschreibt die Optik der DeviceCell 
+	// während des draggens und in der DeviceCellList
+	public static class DeviceCell extends AbstractCell<Device> {
 		private final String imageHtml;
 
 		public DeviceCell(ImageResource image) {
@@ -308,12 +319,12 @@ public class SimulatorView extends Composite implements
 
 			sb.appendHtmlConstant("<table>");
 
-			// Add the contact image.
+			// Add the device image
 			sb.appendHtmlConstant("<tr><td rowspan='3'>");
 			sb.appendHtmlConstant(imageHtml);
 			sb.appendHtmlConstant("</td>");
 
-			// Add the name and address.
+			// Add the name and manufacturer of the device
 			sb.appendHtmlConstant("<td style='font-size:95%;'>");
 			sb.appendEscaped(value.getName());
 			sb.appendHtmlConstant("</td></tr><tr><td>");
