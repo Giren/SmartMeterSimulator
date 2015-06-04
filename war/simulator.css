@@ -45,6 +45,27 @@
 	background-color: #858585;
 }
 
+.droppableActive {
+        border: 1px solid #FFE45C;
+}
+
+.droppableHover {
+        background-color: #C1DEFD;
+}
+
+.dragHover {
+        
+}
+
+.exportCellList {
+        border: 1px solid #CCCCCC;
+        height: 380px;
+        text-align: left;
+        width: 200px;
+        margin: 10px;
+        overflow:auto;
+}
+
 body {
   background-color: #d5d5d5;
 }

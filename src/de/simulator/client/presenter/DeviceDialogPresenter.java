@@ -16,8 +16,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.kiouri.sliderbar.client.event.BarValueChangedEvent;
 import com.kiouri.sliderbar.client.solution.simplehorizontal.SliderBarSimpleHorizontal;
 
+import de.simulator.client.event.AddDeviceEvent;
 import de.simulator.client.event.BarValueChangedHandler;
 import de.simulator.shared.Device;
+import de.simulator.shared.SimulatorDevice;
 
 public class DeviceDialogPresenter {
 	public interface Display {
@@ -44,6 +46,7 @@ public class DeviceDialogPresenter {
 	private final Display display;
 	private DialogBox dialogBox;
 	private int sliderValue;
+	private Device device;
 
 	public DeviceDialogPresenter(HandlerManager eventBus, Display display) {
 		this.eventBus = eventBus;
@@ -56,16 +59,22 @@ public class DeviceDialogPresenter {
 		this.display.getOkButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				//TODO 
-				Window.alert("sliderValue:"+DeviceDialogPresenter.this.sliderValue);
+				//Window.alert("sliderValue:"+DeviceDialogPresenter.this.sliderValue);
+				eventBus.fireEvent( new AddDeviceEvent( device));
 				DeviceDialogPresenter.this.dialogBox.hide();
+				
 			}
 		});
+		
+		
 
 		this.display.getCancelButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				DeviceDialogPresenter.this.dialogBox.hide();
 			}
 		});
+		
+		
 
 		eventBus.addHandler(BarValueChangedEvent.TYPE,
 				new BarValueChangedHandler() {
@@ -97,6 +106,7 @@ public class DeviceDialogPresenter {
 	}
 
 	public void go(Device device) {
+		this.device = device;
 		this.display.getCategory().setValue(device.getCategory());
 		this.display.getDeviceDescription().setValue(device.getDescription());
 		this.display.getDeviceName().setValue(device.getName());
