@@ -43,6 +43,7 @@ public class SimulatorPresenter implements Presenter {
 	private final SimulatorServiceAsync rpcService;
 	private final HandlerManager eventBus;
 	private final Display display;
+	private int deviceID;
 
 	public interface Display {
 		HasDropHandler addDevice();
@@ -69,6 +70,7 @@ public class SimulatorPresenter implements Presenter {
 		this.rpcService = rpcService;
 		this.eventBus = eventBus;
 		this.display = view;
+		deviceID = 0;
 	}
 
 	public void bind() {
@@ -162,7 +164,14 @@ public class SimulatorPresenter implements Presenter {
 	
 	private void showDeviceWindow(Device device) {
 		DeviceDialogPresenter dialogPresenter = new DeviceDialogPresenter(eventBus, new DeviceDialogView());
-		dialogPresenter.go(device);
+		Device confDevice = new Device(
+				String.valueOf(deviceID++),
+				device.getCategory(),
+				device.getManufacturer(),
+				device.getName(),
+				device.getDescription(),
+				device.getLoadProfile());
+		dialogPresenter.go(confDevice);
 	}
 
 	private Series arrayListToSeries(ArrayList<Integer> arrayList) {
@@ -191,12 +200,12 @@ public class SimulatorPresenter implements Presenter {
 							@Override
 							public void onDragStart(
 									gwtquery.plugins.draggable.client.events.DragStartEvent event) {
-								Device device = event.getDraggableData();
+								Device newDevice = event.getDraggableData();
 								Element helper = event.getHelper();
 								
 								SafeHtmlBuilder sb = new SafeHtmlBuilder();
 						        // reuse the contact cell to render the inner html of the drag helper.
-						        new SimulatorView.DeviceCell( MyResources.INSTANCE.deviceImage()).render(null, device, sb);
+						        new SimulatorView.DeviceCell( MyResources.INSTANCE.deviceImage()).render(null, newDevice, sb);
 						        helper.setInnerHTML(sb.toSafeHtml().asString());
 							}
 						});

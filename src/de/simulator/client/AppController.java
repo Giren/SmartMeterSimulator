@@ -48,7 +48,7 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
 			Presenter presenter = null;		
 
 			if ( token.equals( "list")) {
-				presenter = new SimulatorPresenter( rpcService, eventBus, new SimulatorView( rpcService));
+				presenter = new SimulatorPresenter( rpcService, eventBus, new SimulatorView());
 			}
 
 			if ( presenter != null) {

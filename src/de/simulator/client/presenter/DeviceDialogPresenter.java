@@ -51,36 +51,31 @@ public class DeviceDialogPresenter {
 	public DeviceDialogPresenter(HandlerManager eventBus, Display display) {
 		this.eventBus = eventBus;
 		this.display = display;
-		sliderValue = 100;
 		bind();
 	}
 
 	public void bind() {
 		this.display.getOkButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				//TODO 
-				//Window.alert("sliderValue:"+DeviceDialogPresenter.this.sliderValue);
-				eventBus.fireEvent( new AddDeviceEvent( device));
+				//setNewDeviceLoadProfile();
+				eventBus.fireEvent(new AddDeviceEvent(DeviceDialogPresenter.this.device));
 				DeviceDialogPresenter.this.dialogBox.hide();
-				
 			}
 		});
-		
-		
 
 		this.display.getCancelButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				DeviceDialogPresenter.this.dialogBox.hide();
 			}
 		});
-		
-		
 
 		eventBus.addHandler(BarValueChangedEvent.TYPE,
 				new BarValueChangedHandler() {
 					@Override
 					public void onBarValueChanged(BarValueChangedEvent event) {
-						DeviceDialogPresenter.this.sliderValue = event.getValue();
+						DeviceDialogPresenter.this.sliderValue = event
+								.getValue();
+						updateSeries(event.getValue());
 					}
 				});
 
@@ -94,15 +89,27 @@ public class DeviceDialogPresenter {
 				});
 	}
 
-	private Series arrayListToSeries(ArrayList<Integer> arrayList) {
+	private void updateSeries(int sliderValue){
+		this.display.getLoadProfile().removeAllSeries();
+		this.display.getLoadProfile().addSeries(arrayListToSeries(DeviceDialogPresenter.this.device.getLoadProfile(),sliderValue));
+	}
+	
+	private Series arrayListToSeries(ArrayList<Integer> arrayList, int size) {
 		Series newSeries = new Chart().createSeries().setName(
 				"Leistungsaufnahme");
 
-		for (int i = 0; i < arrayList.size(); i++) {
+		for (int i = 0; i < size; i++) {
 			newSeries.addPoint(arrayList.get(i));
 		}
 
 		return newSeries;
+	}
+	
+	private void setNewDeviceLoadProfile(){
+		int len = this.device.getLoadProfile().size();
+		for(int i = this.sliderValue+1; i < len; i++){
+			this.device.getLoadProfile().remove(i);
+		}
 	}
 
 	public void go(Device device) {
@@ -111,10 +118,14 @@ public class DeviceDialogPresenter {
 		this.display.getDeviceDescription().setValue(device.getDescription());
 		this.display.getDeviceName().setValue(device.getName());
 		this.display.getManufacturer().setValue(device.getManufacturer());
-
 		this.display.getLoadProfile().addSeries(
-				arrayListToSeries(device.getLoadProfile()));
+				arrayListToSeries(device.getLoadProfile(),device.getLoadProfile().size()));
 
+		int size = device.getLoadProfile().size();
+		this.display.getSlider().setMaxValue(size);
+		this.display.getSlider().drawMarks("white",size);
+		this.display.getSlider().setValue(size);
+		
 		dialogBox = new DialogBox();
 		dialogBox.setWidget(display.asWidget());
 		dialogBox.setAnimationEnabled(true);
