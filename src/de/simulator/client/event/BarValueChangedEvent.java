@@ -6,7 +6,7 @@ import com.google.gwt.event.shared.GwtEvent.Type;
 import de.simulator.shared.Device;
 
 public class BarValueChangedEvent extends GwtEvent<BarValueChangedHandler>{
-	public static Type<DeviceSelectionChangeEventHandler> TYPE = new Type<DeviceSelectionChangeEventHandler>();
+	public static Type<BarValueChangedHandler> TYPE = new Type<BarValueChangedHandler>();
 	private final int value;
 	
 	public BarValueChangedEvent(int currentSliderValue){
@@ -19,13 +19,11 @@ public class BarValueChangedEvent extends GwtEvent<BarValueChangedHandler>{
 	
 	@Override
 	public com.google.gwt.event.shared.GwtEvent.Type<BarValueChangedHandler> getAssociatedType() {
-		// TODO Auto-generated method stub
-		return null;
+		return TYPE;
 	}
 
 	@Override
 	protected void dispatch(BarValueChangedHandler handler) {
-		// TODO Auto-generated method stub
-		
+		//handler.onBarValueChanged(this);
 	}
 }

@@ -47,16 +47,9 @@ public class DeviceDialogView extends Composite implements DeviceDialogPresenter
 	
 	public DeviceDialogView() {
 
-		sliderBarSimpleHorizontel = new SliderBarSimpleHorizontal(100, "700px",  true);
-//		sliderBarSimpleHorizontel.addBarValueChangedHandler(new BarValueChangedHandler() {
-//                public void onBarValueChanged(BarValueChangedEvent event) {
-//                        
-//                }
-//        });
-		sliderBarSimpleHorizontel.drawMarks("white",6);
+		sliderBarSimpleHorizontel = new SliderBarSimpleHorizontal(100, "700px", true);
 		sliderBarSimpleHorizontel.setMinMarkStep(1);
 		sliderBarSimpleHorizontel.setNotSelectedInFocus();
-		sliderBarSimpleHorizontel.setValue(100);
 		
 		categoryTextBox.setSize("200px", "25px");
 		manufacturerTextBox.setSize("200px", "25px");

@@ -39,10 +39,7 @@ import de.simulator.client.widgets.LoadProfileChartWidget;
 import de.simulator.shared.Device;
 import de.simulator.shared.SimulatorDevice;
 
-public class SimulatorView extends Composite implements SimulatorPresenter.Display {
-
-	private SimulatorServiceAsync rpcService;
-	
+public class SimulatorView extends Composite implements SimulatorPresenter.Display {	
 	// Panels
 	private VerticalPanel menu = new VerticalPanel();
 	private VerticalPanel mainPanel = new VerticalPanel();
@@ -85,13 +82,8 @@ public class SimulatorView extends Composite implements SimulatorPresenter.Displ
 	// Divers
 	SimulatorDevice simulatorDevice = new SimulatorDevice();
 	
-	public SimulatorView(SimulatorServiceAsync rpc) {
-		this.rpcService = rpc;
-
+	public SimulatorView() {
 		channels.setStyleName("channels");
-	
-		preViewDevice.addSeries(preViewSeries);
-
 		preViewDevice.setStyleName("preViewDevice");
 
 		createDeviceTableDND();
@@ -118,13 +110,11 @@ public class SimulatorView extends Composite implements SimulatorPresenter.Displ
 		// 2. Spalte FinalLoadProfile anzeigen
 		// LoadProfilePanel.add( new LoadProfileView());
 		
-			
-
 		//LoadProfilePanel.add(channels);
 		//LoadProfilePanel.setCellWidth(channels, "80%");
 		
-		LoadProfileChartWidget mychart = new LoadProfileChartWidget( "title");	
-		mychart.addSeries( series );
+		LoadProfileChartWidget mychart = new LoadProfileChartWidget( "Lastgang");	
+		//mychart.addSeries( series );
 		channels = mychart.getLoadProfileChart();
 		LoadProfilePanel.add( mychart);
 		//LoadProfilePanel.setCellWidth( mychart, "80%");
