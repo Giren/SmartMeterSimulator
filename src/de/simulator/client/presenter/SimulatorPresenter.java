@@ -133,6 +133,7 @@ public class SimulatorPresenter implements Presenter {
 				display.getCellList().getList().add( event.getDevice());
 				display.getLoadProfileViewChart().addSeries(
 						arrayListToSeries( event.getDevice().getLoadProfile()), true, true);
+				//display.
 				//showDeviceWindow(event.getDevice());
 			}
 		});
