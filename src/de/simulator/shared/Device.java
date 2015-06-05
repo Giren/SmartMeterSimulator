@@ -25,6 +25,15 @@ public class Device implements Serializable {
 		this.description = description;
 		this.loadProfile = loadProfile;		
 	} // Konstruktor Device() zu
+	
+	public Device( Device oldDevice) {
+		this.id = oldDevice.getId();
+		this.category = oldDevice.getCategory();
+		this.manufacturer = oldDevice.getManufacturer();
+		this.name = oldDevice.getName();
+		this.description = oldDevice.getDescription();
+		this.loadProfile = oldDevice.getLoadProfile();		
+	} // Konstruktor Device( Device oldDevice) zu
 
 	public ArrayList<Integer> getLoadProfile() {
 		return loadProfile;
@@ -77,5 +86,9 @@ public class Device implements Serializable {
 		this.description = description;
 	}
 
+	public void cutOffLoadProfile( int positionForCutOff) {
+		
+	}
+	
 }
 

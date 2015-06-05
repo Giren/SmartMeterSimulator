@@ -114,6 +114,7 @@ public class SimulatorPresenter implements Presenter {
 						}
 					}
 				});
+		
 		display.getDeviceDataGrid().getSelectionModel()
 				.addSelectionChangeHandler(new Handler() {
 
@@ -132,10 +133,14 @@ public class SimulatorPresenter implements Presenter {
 		eventBus.addHandler(AddDeviceEvent.TYPE, new AddDeviceEventHandler() {
 			public void onAddDevice(AddDeviceEvent event) {
 				//doAddNewDeviceToChart(event.getDevice());
+				//Device der CellList hinzufügen
 				display.getCellList().getList().add( event.getDevice());
-				display.getLoadProfileViewChart().addSeries(
-						arrayListToSeries( event.getDevice().getLoadProfile()), true, true);
-				//display.
+				// Device dem SimulatorDevice hinzufügen
+				display.getSimulatorDevice().addDevice( event.getDevice());
+				// Chart updaten mit neu berechnetem Lastprofil
+				display.getLoadProfileViewChart().removeAllSeries();
+				display.getLoadProfileViewChart().addSeries( display.getSimulatorDevice().getSimulatorLoadProfileAsSeries(), true, true);
+				
 				//showDeviceWindow(event.getDevice());
 			}
 		});
@@ -165,14 +170,15 @@ public class SimulatorPresenter implements Presenter {
 	
 	private void showDeviceWindow(Device device) {
 		DeviceDialogPresenter dialogPresenter = new DeviceDialogPresenter(eventBus, new DeviceDialogView());
-		Device confDevice = new Device(
-				String.valueOf(deviceID++),
-				device.getCategory(),
-				device.getManufacturer(),
-				device.getName(),
-				device.getDescription(),
-				device.getLoadProfile());
-		dialogPresenter.go(confDevice);
+//		Device confDevice = new Device(
+//				String.valueOf(deviceID++),
+//				device.getCategory(),
+//				device.getManufacturer(),
+//				device.getName(),
+//				device.getDescription(),
+//				device.getLoadProfile());
+		Device confDevice = new Device( device);
+		dialogPresenter.go( confDevice);
 	}
 
 	private Series arrayListToSeries(ArrayList<Integer> arrayList) {

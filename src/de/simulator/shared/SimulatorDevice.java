@@ -24,16 +24,20 @@ public class SimulatorDevice implements Serializable {
 		// TODO
 		// Calculate new LoadProfile
 		// Methode Implementieren
-		this.calcSimulatorLoadProfile();
+		this.calcSimulatorLoadProfile( device);
 	}
 	
 	public Series getSimulatorLoadProfileAsSeries() {
 		// TODO
 		// LoadProfile als Series aufbereiten
-		Series simulatorLoadProfileSeries = null;
-		
-		
-		return simulatorLoadProfileSeries;		
+		Series SimulatorSeries = new Chart().createSeries().setName(
+				"Simulator LoadProfile");
+
+		for (int i = 0; i < this.simulatorLoadProfile.size(); i++) {
+			SimulatorSeries.addPoint( this.simulatorLoadProfile.get(i));
+		}
+
+		return SimulatorSeries;		
 	}
 	
 	public ArrayList<Double> getSimulatorLoadProfileAsArrayList() {
@@ -42,10 +46,19 @@ public class SimulatorDevice implements Serializable {
  
 	
 	
-	private void calcSimulatorLoadProfile() {
+	private void calcSimulatorLoadProfile( Device device) {
 		// TODO
 		// Über alle Devices Iterieren und 
 		// SimulatorLoadProfile berechnen >>> Taktung 1 Sekunde <<<
+		// Zeitstempel der neu hinzuzufügenden Lastgänge müssen noch berücksichtigt werden
 		// IMPLEMENTIEREN
+		for( int i = 0; i < device.getLoadProfile().size(); i++) {
+			if( i >= simulatorLoadProfile.size()) {
+				simulatorLoadProfile.add( Double.valueOf( String.valueOf( device.getLoadProfile().get( i))));
+			} else {
+				double calcVal = simulatorLoadProfile.get( i) + device.getLoadProfile().get( i);
+				simulatorLoadProfile.set( i, calcVal);
+			}
+		}
 	}
 }

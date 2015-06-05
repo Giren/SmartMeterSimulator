@@ -99,7 +99,7 @@ public class DeviceDialogView extends Composite implements DeviceDialogPresenter
 
 	@Override
 	public HasClickHandlers getOkButton() {
-		return okButton;
+		return this.okButton;
 	}
 
 	@Override
