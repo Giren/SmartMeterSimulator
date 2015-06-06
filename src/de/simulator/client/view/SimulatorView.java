@@ -133,6 +133,10 @@ public class SimulatorView extends Composite implements SimulatorPresenter.Displ
 	public HasClickHandlers reloadDatabase() {
 		return reloadButton;
 	}
+	
+	public HasClickHandlers getRunButton() {
+		return this.runButton;
+	}
 
 	public HasDropHandler addDevice() {
 		return deviceCellList;

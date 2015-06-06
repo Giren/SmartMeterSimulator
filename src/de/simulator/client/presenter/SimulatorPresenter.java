@@ -35,6 +35,7 @@ import de.simulator.client.event.ReloadDatabaseEvent;
 import de.simulator.client.event.ReloadDatabaseEventHandler;
 import de.simulator.client.view.DeviceDialogView;
 import de.simulator.client.view.MyResources;
+import de.simulator.client.view.RunDialogView;
 import de.simulator.client.view.SimulatorView;
 import de.simulator.shared.Device;
 import de.simulator.shared.SimulatorDevice;
@@ -49,6 +50,8 @@ public class SimulatorPresenter implements Presenter {
 		HasDropHandler addDevice();
 
 		HasClickHandlers reloadDatabase();
+		
+		HasClickHandlers getRunButton();
 
 		Chart getLoadProfilePreViewChart();
 
@@ -153,6 +156,17 @@ public class SimulatorPresenter implements Presenter {
 				//eventBus.fireEvent(new AddDeviceEvent(selected));
 			}
 		});
+		
+		
+		display.getRunButton().addClickHandler( new ClickHandler() {
+			@Override
+			public void onClick( ClickEvent event) {
+				RunDialogPresenter runDialogPresenter =  new RunDialogPresenter( eventBus, new RunDialogView());
+				SimulatorDevice simulatorDevice = display.getSimulatorDevice();
+				runDialogPresenter.go( simulatorDevice);
+			}
+		});
+		
 	}
 
 

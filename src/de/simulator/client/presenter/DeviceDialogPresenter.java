@@ -57,16 +57,9 @@ public class DeviceDialogPresenter {
 	public void bind() {
 		this.display.getOkButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
-				
-//				int len = DeviceDialogPresenter.this.device.getLoadProfile().size();
-//				int sliderValue = DeviceDialogPresenter.this.sliderValue+1;
-//				for(int i = len; i > sliderValue; i--) {
-//					DeviceDialogPresenter.this.device.getLoadProfile().remove(i);
-//				}
-				//setNewDeviceLoadProfile();
+
 				DeviceDialogPresenter.this.dialogBox.hide();
 				DeviceDialogPresenter.this.device.setLoadProfile( workLoadProfile);
-				display.getSlider().clear();
 				
 				eventBus.fireEvent(new AddDeviceEvent(DeviceDialogPresenter.this.device));
 			}
@@ -95,19 +88,14 @@ public class DeviceDialogPresenter {
 					public void onBarValueChanged(BarValueChangedEvent event) {
 						// eventBus.fireEvent(new BarValueChangedEvent(event.getValue()));
 						DeviceDialogPresenter.this.sliderValue = event.getValue();
-						
-						updateSeries(event.getValue());
+						updateSeries( event.getValue());
 					}
 				});
 	}
 
 	private void updateSeries(int sliderValue){
-		this.workLoadProfile = null;
 		this.workLoadProfile = new ArrayList<Integer>();
 		
-		//int len = DeviceDialogPresenter.this.device.getLoadProfile().size();
-		//Window.alert( String.valueOf( len));
-		//int workSliderValue = DeviceDialogPresenter.this.sliderValue+1;
 		for(int i = 0; i < DeviceDialogPresenter.this.sliderValue; i++) {
 			this.workLoadProfile.add( DeviceDialogPresenter.this.device.getLoadProfile().get( i));
 		}
@@ -127,12 +115,12 @@ public class DeviceDialogPresenter {
 		return newSeries;
 	}
 	
-	private void setNewDeviceLoadProfile(){
-		int len = this.device.getLoadProfile().size();
-		for(int i = this.sliderValue+1; i < len; i++){
-			this.device.getLoadProfile().remove(i);
-		}
-	}
+//	private void setNewDeviceLoadProfile(){
+//		int len = this.device.getLoadProfile().size();
+//		for(int i = this.sliderValue+1; i < len; i++){
+//			this.device.getLoadProfile().remove(i);
+//		}
+//	}
 
 	public void go(Device device) {
 		this.device = new Device( device);
@@ -151,7 +139,7 @@ public class DeviceDialogPresenter {
 		dialogBox = new DialogBox();
 		dialogBox.setWidget( display.asWidget());
 		dialogBox.setAnimationEnabled( true);
-		dialogBox.setGlassEnabled(true);
+		dialogBox.setGlassEnabled( true);
 		dialogBox.setText("Geräteinformation");
 		dialogBox.center();
 		dialogBox.show();

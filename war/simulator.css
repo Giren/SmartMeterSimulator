@@ -69,3 +69,224 @@
 body {
   background-color: #d5d5d5;
 }
+
+
+.simulationPopUp {
+	border: 1px dashed #000000;
+	background-color: #F1F1F1;	
+}
+
+.unitLabel {
+	font-family: Arial Unicode MS, Arial, sans-serif;
+	font-size: 40px;
+	font-weight: normal;
+	font-color: black;
+	text-align: right;
+}
+
+@font-face {
+    font-family: digital-7;
+    src: url('fonts/digital-7.ttf');
+}
+
+.powerLabel {
+	font-family: digital-7;
+	font-size: 70px;
+	font-weight: normal;
+	font-color: black;
+	text-align: left;
+}
+
+.gwt-DialogBox .myCaption {
+  background: #F1F1F1;
+  padding: 4px 8px 4px 4px;
+  cursor: default;
+  font-family: Arial Unicode MS, Arial, sans-serif;
+  font-weight: bold;
+  border-bottom: 1px solid #bbbbbb;
+  border-top: 1px solid #D2D2D2;
+}
+
+
+.gwt-DialogBox .Caption {
+  background: #F1F1F1;
+  padding: 4px 8px 4px 4px;
+  cursor: default;
+  font-family: Arial Unicode MS, Arial, sans-serif;
+  font-weight: bold;
+  border-bottom: 1px solid #bbbbbb;
+  border-top: 1px solid #D2D2D2;
+}
+.gwt-DialogBox .dialogContent {
+}
+.gwt-DialogBox .dialogMiddleCenter {
+  padding: 3px;
+  background: #D2D2D2;
+}
+
+.gwt-DialogBox .dialogTopLeftInner {
+  width: 10px;
+  height: 8px;
+  zoom: 1;
+}
+.gwt-DialogBox .dialogTopRightInner {
+  width: 12px;
+  zoom: 1;
+}
+.gwt-DialogBox .dialogBottomLeftInner {
+  width: 10px;
+  height: 12px;
+  zoom: 1;
+}
+.gwt-DialogBox .dialogBottomRightInner {
+  width: 12px;
+  height: 12px;
+  zoom: 1;
+}
+
+html>body .gwt-DialogBox {
+}
+* html .gwt-DialogBox .dialogTopLeftInner {
+  width: 10px;
+  overflow: hidden;
+}
+* html .gwt-DialogBox .dialogTopRightInner {
+  width: 12px;
+  overflow: hidden;
+}
+* html .gwt-DialogBox .dialogBottomLeftInner {
+  width: 10px;
+  height: 12px;
+  overflow: hidden;
+}
+* html .gwt-DialogBox .dialogBottomRightInner {
+  width: 12px;
+  height: 12px;
+  overflow: hidden;
+}
+.cw-DialogBox {
+}
+
+.gwt-ToggleButton-up,
+.gwt-ToggleButton-up-hovering,
+.gwt-ToggleButton-up-disabled,
+.gwt-ToggleButton-down,
+.gwt-ToggleButton-down-hovering,
+.gwt-ToggleButton-down-disabled {
+  margin: 0;
+  text-decoration: none;
+
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+.gwt-ToggleButton-up,
+.gwt-ToggleButton-up-hovering,
+.gwt-ToggleButton-up-disabled {
+  padding: 3px 5px 3px 5px;
+}
+.gwt-ToggleButton-up {
+  border:1px solid #bbb;
+  border-bottom: 1px solid #a0a0a0;
+  cursor: pointer;
+  cursor: hand;
+}
+.gwt-ToggleButton-up-hovering {
+  border: 1px solid;
+  border-color: #939393;
+  cursor: pointer;
+  cursor: hand;
+}
+.gwt-ToggleButton-up-disabled {
+  border: 1px solid #bbb;
+  cursor: default;
+  opacity: .5;
+  zoom: 1;
+  filter: alpha(opacity=45);
+}
+.gwt-ToggleButton-down,
+.gwt-ToggleButton-down-hovering,
+.gwt-ToggleButton-down-disabled {
+  padding: 4px 4px 2px 6px;
+}
+.gwt-ToggleButton-down {
+  background-position: 0 -513px;
+  border: 1px inset #666;
+  cursor: pointer;
+  cursor: hand;
+}
+.gwt-ToggleButton-down-hovering {
+  background-position: 0 -513px;
+  border: 1px inset;
+  border-color: #9cf #69e #69e #7af;
+  cursor: pointer;
+  cursor: hand;
+}
+.gwt-ToggleButton-down-disabled {
+  background-position: 0 -513px;
+  border: 1px inset #ccc;
+  cursor: default;
+  opacity: .5;
+  zoom: 1;
+  filter: alpha(opacity=45);
+}
+
+.gwt-PushButton-up,
+.gwt-PushButton-up-hovering,
+.gwt-PushButton-up-disabled,
+.gwt-PushButton-down,
+.gwt-PushButton-down-hovering,
+.gwt-PushButton-down-disabled {
+  margin: 0;
+  text-decoration: none;
+  
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+}
+.gwt-PushButton-up,
+.gwt-PushButton-up-hovering,
+.gwt-PushButton-up-disabled {
+  padding: 3px 5px 3px 5px;
+}
+.gwt-PushButton-up {
+  border:1px solid #bbb;
+  border-bottom: 1px solid #a0a0a0;
+  cursor: pointer;
+  cursor: hand;
+}
+.gwt-PushButton-up-hovering {
+  border: 1px solid;
+  border-color: #939393;
+  cursor: pointer;
+  cursor: hand;
+}
+.gwt-PushButton-up-disabled {
+  border: 1px solid #bbb;
+  cursor: default;
+  opacity: .5;
+  filter: alpha(opacity=45);
+  zoom: 1;
+}
+.gwt-PushButton-down,
+.gwt-PushButton-down-hovering,
+.gwt-PushButton-down-disabled {
+  padding: 4px 4px 2px 6px;
+  outline:none;
+}
+.gwt-PushButton-down {
+  border: 1px inset #666;
+  cursor: pointer;
+  cursor: hand;
+}
+.gwt-PushButton-down-hovering {
+  border: 1px solid #939393;
+  border-top: 1px solid #333333;
+  cursor: pointer;
+  cursor: hand;
+}
+.gwt-PushButton-down-disabled {
+  border: 1px outset #ccc;
+  cursor: default;
+  opacity: 0.5;
+  filter: alpha(opacity=45);
+  zoom: 1;
+}

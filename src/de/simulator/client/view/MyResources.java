@@ -10,5 +10,5 @@ public interface MyResources extends ClientBundle {
 	 
 	 @Source("deviceImage.png")
 	 ImageResource deviceImage();
-
+	 
 }
