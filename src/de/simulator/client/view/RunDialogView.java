@@ -21,10 +21,10 @@ public class RunDialogView extends Composite implements RunDialogPresenter.Displ
 	
 	//Panels
 	private VerticalPanel simulationContent;
-	private HorizontalPanel controlPanel; // Panel mit ControlButtons (links) und kWh Anzeige (rechts)
+	private HorizontalPanel controlPanel;
 	private HorizontalPanel buttonPanel;
 	private HorizontalPanel powerPanel;
-	private HorizontalPanel showPanel;	// Panel mit animiertem SmartMeter (links) und Chart (rechts)
+	private HorizontalPanel showPanel;
 	
 	// Toggle Buttons
 	PushButton playButton;
@@ -35,12 +35,10 @@ public class RunDialogView extends Composite implements RunDialogPresenter.Displ
 	private Label actualPowerLabel = new Label("power");
 	private Label unitLabel = new Label( "kWh");
 	
-	
 	// LoadProfileChart
 	private Chart simulationLoadProfile = new Chart().setType(Series.Type.SPLINE)
 				.setChartTitleText("Lastgang").setMarginRight(10);
 	private Series loadProfileSeries = simulationLoadProfile.createSeries();
-	
 	
 	public RunDialogView() {
 		simulationContent = new VerticalPanel();
@@ -52,8 +50,7 @@ public class RunDialogView extends Composite implements RunDialogPresenter.Displ
 		
 		// Panel Init
 		this.controlPanel = new HorizontalPanel();
-		//this.controlPanel.setSpacing( 1);
-		
+
 		this.buttonPanel = new HorizontalPanel();
 		this.buttonPanel.setSpacing( 4);
 		this.powerPanel = new HorizontalPanel();
@@ -77,24 +74,24 @@ public class RunDialogView extends Composite implements RunDialogPresenter.Displ
 		this.buttonPanel.add( stopButton);
 		this.buttonPanel.add( resetButton);		
 		
-		this.powerPanel.add( actualPowerLabel);
-		this.powerPanel.setCellVerticalAlignment( actualPowerLabel, HasVerticalAlignment.ALIGN_MIDDLE);
-		this.powerPanel.setCellHorizontalAlignment( actualPowerLabel, HasHorizontalAlignment.ALIGN_RIGHT);
-		
-		this.powerPanel.add( unitLabel);	
-		this.powerPanel.setCellVerticalAlignment( unitLabel, HasVerticalAlignment.ALIGN_MIDDLE);
-		this.powerPanel.setCellHorizontalAlignment( unitLabel, HasHorizontalAlignment.ALIGN_LEFT);
-
-		
-		this.controlPanel.add( this.buttonPanel);
-		this.controlPanel.setCellWidth( this.buttonPanel, "320px");
 		this.buttonPanel.setStyleName( "simulationPopUp");
 		this.buttonPanel.setWidth( "100%");
 		this.buttonPanel.setHeight( "125px");
 		
+		this.controlPanel.add( this.buttonPanel);
+		this.controlPanel.setCellWidth( this.buttonPanel, "320px");
+		
+		this.powerPanel.add( actualPowerLabel);
+		this.powerPanel.setCellVerticalAlignment( actualPowerLabel, HasVerticalAlignment.ALIGN_MIDDLE);
+		this.powerPanel.setCellHorizontalAlignment( actualPowerLabel, HasHorizontalAlignment.ALIGN_RIGHT);
+		this.powerPanel.add( unitLabel);	
+		this.powerPanel.setCellVerticalAlignment( unitLabel, HasVerticalAlignment.ALIGN_MIDDLE);
+		this.powerPanel.setCellHorizontalAlignment( unitLabel, HasHorizontalAlignment.ALIGN_LEFT);
+
 		this.powerPanel.setStyleName( "simulationPopUp");
 		this.powerPanel.setWidth( "370px");
 		this.powerPanel.setHeight( "125px");
+		
 		this.controlPanel.add( this.powerPanel);
 		this.controlPanel.setCellHorizontalAlignment( this.powerPanel, HasHorizontalAlignment.ALIGN_RIGHT);
 		this.controlPanel.setCellWidth( this.powerPanel, "100%");
@@ -102,9 +99,8 @@ public class RunDialogView extends Composite implements RunDialogPresenter.Displ
 		this.simulationLoadProfile.addSeries( this.loadProfileSeries);
 		this.simulationLoadProfile.getXAxis().setAxisTitleText( "time [s]", false);
 		this.simulationLoadProfile.getYAxis().setAxisTitleText( "kWh", false);
-		this.simulationLoadProfile.setOption("legend/enabled", false);
+		this.simulationLoadProfile.setOption( "legend/enabled", false);
 		this.simulationLoadProfile.getXAxis().setAllowDecimals( true);
-
 		
 		this.showPanel.add( this.simulationLoadProfile);
 		this.simulationLoadProfile.setWidth( "780px");

@@ -33,9 +33,7 @@ import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-import de.simulator.client.SimulatorServiceAsync;
 import de.simulator.client.presenter.SimulatorPresenter;
-import de.simulator.client.widgets.LoadProfileChartWidget;
 import de.simulator.shared.Device;
 import de.simulator.shared.SimulatorDevice;
 
@@ -48,85 +46,79 @@ public class SimulatorView extends Composite implements SimulatorPresenter.Displ
 	private HorizontalPanel LoadProfilePanel = new HorizontalPanel();
 	
 	// Buttons
-	private Button reloadButton = new Button("reload");
-	private Button runButton = new Button("run");
-	private Button pushButton = new Button("push");
+	private Button reloadButton = new Button( "reload");
+	private Button runButton = new Button( "run");
+	private Button pushButton = new Button( "push");
+	private Button resetButton = new Button ( "Reset");
 	
 	// Charts
-	private Chart channels = new Chart().setType(Series.Type.SPLINE)
-			.setChartTitleText("Lastgang").setMarginRight(10);
-	private Chart preViewDevice = new Chart().setType(Series.Type.SPLINE)
-			.setChartTitleText("Vorschau").setMarginRight(10);
-	
-	// Punktmenge
-	Series series = channels.createSeries().setName("Leistungsaufnahme")
-			.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
+	private Chart channels = new Chart().setType( Series.Type.SPLINE)
+			.setChartTitleText( "Lastgang").setMarginRight( 10);
+	private Chart preViewDevice = new Chart().setType( Series.Type.SPLINE)
+			.setChartTitleText( "Vorschau").setMarginRight( 10);
 
-	Series preViewSeries = preViewDevice.createSeries()
-			.setName("Leistungsaufnahme des Geraets")
-			.setPoints(new Number[] { 163, 203, 276, 408, 547, 729, 628 });
-	
 	// Grid
 	private DragAndDropDataGrid<Device> DeviceDataGrid;
 	
 	// CellList
 	@UiField(provided = true)
-//	private DroppableWidget<CellList<String>> deviceCellList;
 	private DroppableWidget<CellList<Device>> deviceCellList;
 	
 	//Variables
 	private SingleSelectionModel<Device> selectionModelDnD;
-//	private ListDataProvider<String> addedDeviceList;
 	private ListDataProvider<Device> addedDeviceList;
 	
 	// Divers
 	SimulatorDevice simulatorDevice = new SimulatorDevice();
 	
 	public SimulatorView() {
-		channels.setStyleName("channels");
-		preViewDevice.setStyleName("preViewDevice");
+		channels.setStyleName( "channels");
+		preViewDevice.setStyleName( "preViewDevice");
+		
+		this.channels.getXAxis().setAxisTitleText( "time [s]", true);
+		this.channels.getYAxis().setAxisTitleText( "kWh", true);
+		
+		this.preViewDevice.getXAxis().setAxisTitleText( "time [s]", true);
+		this.preViewDevice.getYAxis().setAxisTitleText( "kWh", true);
 
 		createDeviceTableDND();
-		configPanel.add(DeviceDataGrid); // erste Spalte DeviceTabelle
-		configPanel.setCellWidth(DeviceDataGrid, "50%");
-		configPanel.add(preViewDevice); // zweite Spalte VorschauGraph
-		configPanel.setCellWidth(preViewDevice, "50%");
+		configPanel.add( DeviceDataGrid); // erste Spalte DeviceTabelle
+		configPanel.setCellWidth( DeviceDataGrid, "50%");
+		configPanel.add( preViewDevice); // zweite Spalte VorschauGraph
+		configPanel.setCellWidth( preViewDevice, "50%");
 
 		configPanel.addStyleName("configPanel");
+		
+		this.runButton.setSize( "50px", "50px");
+		this.reloadButton.setSize( "50px", "50px");
+		this.pushButton.setSize( "50px", "50px");
+		this.resetButton.setSize( "50px", "50px");
 
-		menu.add(runButton);
-		menu.add(reloadButton);
-		menu.add(pushButton);
-		menu.addStyleName("menu");
+		menu.add( runButton);
+		menu.add( reloadButton);
+		//menu.add( pushButton);
+		menu.add( resetButton);
+		menu.addStyleName( "menu");
 
-		mainPanel.add(configPanel);
-		mainPanel.addStyleName("mainpanel");
+		mainPanel.add( configPanel);
+		mainPanel.addStyleName( "mainpanel");
 
-		LoadProfilePanel.addStyleName("configPanel");
+		LoadProfilePanel.addStyleName( "configPanel");
 		createDroppableList();
-		// 1. Spalte CellList anzeigen
-		LoadProfilePanel.add(deviceCellList);
-		LoadProfilePanel.setCellWidth(deviceCellList, "15%");
-		// 2. Spalte FinalLoadProfile anzeigen
-		// LoadProfilePanel.add( new LoadProfileView());
-		
-		//LoadProfilePanel.add(channels);
-		//LoadProfilePanel.setCellWidth(channels, "80%");
-		
-		LoadProfileChartWidget mychart = new LoadProfileChartWidget( "Lastgang");	
-		//mychart.addSeries( series );
-		channels = mychart.getLoadProfileChart();
-		LoadProfilePanel.add( mychart);
-		//LoadProfilePanel.setCellWidth( mychart, "80%");
-		
-		mainPanel.add(LoadProfilePanel);
+		LoadProfilePanel.add( deviceCellList);
+		LoadProfilePanel.setCellWidth( deviceCellList, "15%");
 
-		browserPanel.add(menu);
-		browserPanel.add(mainPanel);
-		browserPanel.addStyleName("browserpanel");
-		browserPanel.setCellWidth(mainPanel, "100%");
+		LoadProfilePanel.add( this.channels);
+		LoadProfilePanel.setCellWidth( channels, "85%");
+		
+		mainPanel.add( LoadProfilePanel);
 
-		initWidget(browserPanel);
+		browserPanel.add( menu);
+		browserPanel.add( mainPanel);
+		browserPanel.addStyleName( "browserpanel");
+		browserPanel.setCellWidth( mainPanel, "100%");
+
+		initWidget( browserPanel);
 	}
 
 	@Override
@@ -140,6 +132,10 @@ public class SimulatorView extends Composite implements SimulatorPresenter.Displ
 
 	public HasDropHandler addDevice() {
 		return deviceCellList;
+	}
+	
+	public Button getResetButton() {
+		return this.resetButton;
 	}
 
 	public Widget asWidget() {
@@ -173,45 +169,30 @@ public class SimulatorView extends Composite implements SimulatorPresenter.Displ
 	private void createDeviceTableDND() {
 		DeviceDataGrid = new DragAndDropDataGrid<Device>();
 
-		// Add a selection model so we can select cells.
 		final MultiSelectionModel<Device> selectionModel = new MultiSelectionModel<Device>();
 		DeviceDataGrid.setSelectionModel(selectionModel);
 
-		// Initialize the columns.
 		initTableColumns(selectionModel);
-
 		DeviceDataGrid.setSize("100%", "300px");
 
-		// Add a selection model to handle user selection
 		selectionModelDnD = new SingleSelectionModel<Device>();
 		DeviceDataGrid.setSelectionModel(selectionModelDnD);
 	}
 
 	static interface Templates extends SafeHtmlTemplates {
 		Templates INSTANCE = GWT.create(Templates.class);
-
 		@Template("<div id='dragHelper' style='border:1px solid black; background-color:#ffffff; color:black; width:150px;'></div>")
 		SafeHtml outerHelper();
 	}
 
 	private void initDragOperation(DragAndDropColumn<?, ?> column) {
-
 		// retrieve draggableOptions on the column
 		DraggableOptions draggableOptions = column.getDraggableOptions();
-		// use template to construct the helper. The content of the div will be
-		// set
-		// after
-		draggableOptions.setHelper($(Templates.INSTANCE.outerHelper()
-				.asString()));
-		// opacity of the helper
+		draggableOptions.setHelper($(Templates.INSTANCE.outerHelper().asString()));
 		draggableOptions.setOpacity((float) 0.8);
-		// cursor to use during the drag operation
 		draggableOptions.setCursor(Cursor.MOVE);
-		// set the revert option
 		draggableOptions.setRevert(RevertOption.ON_INVALID_DROP);
-		// prevents dragging when user click on the category drop-down list
 		draggableOptions.setCancel("select");
-		// attach the helper to the document because datagrid is scrollable
 		draggableOptions.setAppendTo("body");
 	}
 
@@ -226,7 +207,6 @@ public class SimulatorView extends Composite implements SimulatorPresenter.Displ
 			}
 		};
 		categoryColumn.setCellDraggableOnly();
-
 		initDragOperation(categoryColumn);
 		DeviceDataGrid.addColumn(categoryColumn, "Kategorie");
 
@@ -239,7 +219,6 @@ public class SimulatorView extends Composite implements SimulatorPresenter.Displ
 			}
 		};
 		manufacturerColumn.setCellDraggableOnly();
-
 		initDragOperation(manufacturerColumn);
 		DeviceDataGrid.addColumn(manufacturerColumn, "Hersteller");
 
@@ -252,7 +231,6 @@ public class SimulatorView extends Composite implements SimulatorPresenter.Displ
 			}
 		};
 		deviceNameColumn.setCellDraggableOnly();
-
 		initDragOperation(deviceNameColumn);
 		DeviceDataGrid.addColumn(deviceNameColumn, "Gerätename");
 
@@ -265,38 +243,24 @@ public class SimulatorView extends Composite implements SimulatorPresenter.Displ
 			}
 		};
 		descriptionColumn.setCellDraggableOnly();
-
 		initDragOperation(descriptionColumn);
 		DeviceDataGrid.addColumn(descriptionColumn, "Beschreibung");
 	}
 
 
 	private void createDroppableList() {
-		// Create a DeviceCell to render each device.
 		DeviceCell deviceCell = new DeviceCell( MyResources.INSTANCE.deviceImage());
-
-		// Create a CellList that uses the deviceCell
 		CellList<Device> cellList = new CellList<Device>(deviceCell);
-		//cellList.setWidth("100%");
 		cellList.setStyleName("exportCellList");
-
-		// cellList.setPageSize(30);
-		// cellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
-		// temporary ListDataProvider to keep list of contacts to delete
 		addedDeviceList = new ListDataProvider<Device>();
-
 		addedDeviceList.addDataDisplay(cellList);
-
 		// make the cell list droppable.
 		deviceCellList = new DroppableWidget<CellList<Device>>(cellList);
 		deviceCellList.setDroppableHoverClass( "droppableHover");
 		deviceCellList.setActiveClass( "droppableActive");
-		//deviceCellList.setWidth("90%");
 	}
 
 	
-	// Beschreibt die Optik der DeviceCell 
-	// während des draggens und in der DeviceCellList
 	public static class DeviceCell extends AbstractCell<Device> {
 		private final String imageHtml;
 
@@ -310,14 +274,11 @@ public class SimulatorView extends Composite implements SimulatorPresenter.Displ
 			if (value == null) {
 				return;
 			}
-
 			sb.appendHtmlConstant("<table>");
-
 			// Add the device image
 			sb.appendHtmlConstant("<tr><td rowspan='3'>");
 			sb.appendHtmlConstant(imageHtml);
 			sb.appendHtmlConstant("</td>");
-
 			// Add the name and manufacturer of the device
 			sb.appendHtmlConstant("<td style='font-size:95%;'>");
 			sb.appendEscaped(value.getName());

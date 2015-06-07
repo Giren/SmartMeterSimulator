@@ -20,6 +20,7 @@ import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -31,8 +32,6 @@ import de.simulator.client.event.AddDeviceEvent;
 import de.simulator.client.event.AddDeviceEventHandler;
 import de.simulator.client.event.DeviceSelectionChangeEvent;
 import de.simulator.client.event.DeviceSelectionChangeEventHandler;
-import de.simulator.client.event.ReloadDatabaseEvent;
-import de.simulator.client.event.ReloadDatabaseEventHandler;
 import de.simulator.client.view.DeviceDialogView;
 import de.simulator.client.view.MyResources;
 import de.simulator.client.view.RunDialogView;
@@ -44,53 +43,36 @@ public class SimulatorPresenter implements Presenter {
 	private final SimulatorServiceAsync rpcService;
 	private final HandlerManager eventBus;
 	private final Display display;
-	private int deviceID;
 
 	public interface Display {
 		HasDropHandler addDevice();
-
-		HasClickHandlers reloadDatabase();
-		
+		HasClickHandlers reloadDatabase();		
 		HasClickHandlers getRunButton();
-
 		Chart getLoadProfilePreViewChart();
-
-		Chart getLoadProfileViewChart();
-
+		Chart getLoadProfileViewChart();		
+		Button getResetButton();
 		ListDataProvider<Device> getCellList();
-
 		DragAndDropDataGrid<Device> getDeviceDataGrid();
-
 		SingleSelectionModel<Device> getSingleSelectionModel();
-
-		SimulatorDevice getSimulatorDevice();
-		
+		SimulatorDevice getSimulatorDevice();		
 		Widget asWidget();
 	}
 
-	public SimulatorPresenter(SimulatorServiceAsync rpcService,
+	public SimulatorPresenter( SimulatorServiceAsync rpcService,
 			HandlerManager eventBus, Display view) {
 		this.rpcService = rpcService;
 		this.eventBus = eventBus;
 		this.display = view;
-		deviceID = 0;
 	}
 
 	public void bind() {
 		// Hier alle Events abhandeln, die SimulatorView() betreffen
 
 		// Event Reload Button
-		eventBus.addHandler(ReloadDatabaseEvent.TYPE,
-				new ReloadDatabaseEventHandler() {
-					public void onReloadDatabase(ReloadDatabaseEvent event) {
-						reloadDatabase();
-					}
-				});
-
 		display.reloadDatabase().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				eventBus.fireEvent(new ReloadDatabaseEvent());
+				reloadDatabase();
 			}
 		});
 
@@ -135,7 +117,6 @@ public class SimulatorPresenter implements Presenter {
 		// Event neues Device hinzufügen
 		eventBus.addHandler(AddDeviceEvent.TYPE, new AddDeviceEventHandler() {
 			public void onAddDevice(AddDeviceEvent event) {
-				//doAddNewDeviceToChart(event.getDevice());
 				//Device der CellList hinzufügen
 				display.getCellList().getList().add( event.getDevice());
 				// Device dem SimulatorDevice hinzufügen
@@ -143,8 +124,6 @@ public class SimulatorPresenter implements Presenter {
 				// Chart updaten mit neu berechnetem Lastprofil
 				display.getLoadProfileViewChart().removeAllSeries();
 				display.getLoadProfileViewChart().addSeries( display.getSimulatorDevice().getSimulatorLoadProfileAsSeries(), true, true);
-				
-				//showDeviceWindow(event.getDevice());
 			}
 		});
 
@@ -152,11 +131,9 @@ public class SimulatorPresenter implements Presenter {
 			@Override
 			public void onDrop(DropEvent event) {
 				Device selected = event.getDraggableData();
-				doAddNewDeviceToChart( selected);
-				//eventBus.fireEvent(new AddDeviceEvent(selected));
+				showDeviceWindow( selected);
 			}
 		});
-		
 		
 		display.getRunButton().addClickHandler( new ClickHandler() {
 			@Override
@@ -167,37 +144,29 @@ public class SimulatorPresenter implements Presenter {
 			}
 		});
 		
+		display.getResetButton().addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				display.getCellList().getList().clear();
+				display.getSimulatorDevice().clear();
+				display.getLoadProfileViewChart().removeAllSeries();
+				display.getLoadProfileViewChart().redraw();
+			}
+		});
 	}
-
 
 	private void reloadDatabase() {
-		Window.alert("reloadDatabase");
-	}
-
-	private void doAddNewDeviceToChart(Device device) {
-		//display.getCellList().getList().add(device.getName());
-		//display.getCellList().getList().add( device);
-		//display.getLoadProfileViewChart().addSeries(
-		//		arrayListToSeries(device.getLoadProfile()), true, true);
-		showDeviceWindow(device);
+		Window.alert("reload devices from database");
 	}
 	
 	private void showDeviceWindow(Device device) {
 		DeviceDialogPresenter dialogPresenter = new DeviceDialogPresenter(eventBus, new DeviceDialogView());
-//		Device confDevice = new Device(
-//				String.valueOf(deviceID++),
-//				device.getCategory(),
-//				device.getManufacturer(),
-//				device.getName(),
-//				device.getDescription(),
-//				device.getLoadProfile());
 		Device confDevice = new Device( device);
 		dialogPresenter.go( confDevice);
 	}
 
 	private Series arrayListToSeries(ArrayList<Integer> arrayList) {
-		Series newSeries = new Chart().createSeries().setName(
-				"Leistungsaufnahme");
+		Series newSeries = new Chart().createSeries().setName( "Leistungsaufnahme");
 
 		for (int i = 0; i < arrayList.size(); i++) {
 			newSeries.addPoint(arrayList.get(i));

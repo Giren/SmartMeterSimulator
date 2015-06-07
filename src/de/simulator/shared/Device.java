@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.moxieapps.gwt.highcharts.client.Series;
 
 public class Device implements Serializable {
+	
 	// Variablen Deklarationen
 	private String id;
 	private String category;
@@ -16,7 +17,6 @@ public class Device implements Serializable {
 	
 	public Device(){}
 	
-	// Konstruktor
 	public Device(String id, String category, String manufacturer, String name, String description, ArrayList<Integer> loadProfile) {
 		this.id = id;
 		this.category = category;
@@ -24,7 +24,7 @@ public class Device implements Serializable {
 		this.name = name;
 		this.description = description;
 		this.loadProfile = loadProfile;		
-	} // Konstruktor Device() zu
+	}
 	
 	public Device( Device oldDevice) {
 		this.id = oldDevice.getId();

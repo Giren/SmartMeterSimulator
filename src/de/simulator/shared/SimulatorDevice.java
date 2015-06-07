@@ -9,27 +9,19 @@ import org.moxieapps.gwt.highcharts.client.Series;
 public class SimulatorDevice implements Serializable {
 	
 	ArrayList<Device> deviceArrayList;
-	
 	ArrayList<Double> simulatorLoadProfile; 
 	
 	public SimulatorDevice () {
-		
 		this.deviceArrayList = new ArrayList<Device>();
 		this.simulatorLoadProfile = new ArrayList<Double>();
-		
 	}
 	
 	public void addDevice( Device device) {
 		this.deviceArrayList.add( device);
-		// TODO
-		// Calculate new LoadProfile
-		// Methode Implementieren
 		this.calcSimulatorLoadProfile( device);
 	}
 	
 	public Series getSimulatorLoadProfileAsSeries() {
-		// TODO
-		// LoadProfile als Series aufbereiten
 		Series SimulatorSeries = new Chart().createSeries().setName(
 				"Simulator LoadProfile");
 
@@ -44,7 +36,10 @@ public class SimulatorDevice implements Serializable {
 		return this.simulatorLoadProfile;
 	}
  
-	
+	public void clear() {
+		this.simulatorLoadProfile.clear();
+		this.deviceArrayList.clear();
+	}
 	
 	private void calcSimulatorLoadProfile( Device device) {
 		// TODO

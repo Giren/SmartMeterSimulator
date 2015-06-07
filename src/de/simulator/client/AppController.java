@@ -28,8 +28,6 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
 		// Hier alle globalen Events abhandeln, welche eine Umschaltung der View zur Folge haben
 	}
 
-
-
 	@Override
 	public void go( HasWidgets container) {
 		this.container = container;

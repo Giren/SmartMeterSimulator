@@ -25,7 +25,8 @@ public class ClosableDialogBox extends DialogBox {
 		this.dialogTitle = dialogTitle;
 		this.titleInformation = titleInformation;
 
-		this.closeButton = new Image( "images/closeButtonActive.png");;
+		this.closeButton = new Image( "images/closeButtonActive.png");
+		this.closeButton.setTitle( "close");
 		
 		this.captionPanel = new HorizontalPanel();
 		
@@ -35,7 +36,6 @@ public class ClosableDialogBox extends DialogBox {
 			this.title = new Label( this.dialogTitle + " - " + this.titleInformation);
 		}
 			 
-
 		this.captionPanel.setStyleName( "myCaption");
 		this.captionPanel.setWidth( "100%");
 		this.captionPanel.setHeight( "34px");
