@@ -60,6 +60,7 @@ public class RunDialogPresenter {
 				display.getResetButton().setEnabled( false);
 				
 				closableDialogBox.setCloseButtonVisible( false);
+				closableDialogBox.setTitleInformation( "running 0%");
 				
 				simulationInterval = new Timer() {
 			    	@Override

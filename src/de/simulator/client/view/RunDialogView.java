@@ -65,8 +65,12 @@ public class RunDialogView extends Composite implements RunDialogPresenter.Displ
 		this.stopButton = new PushButton( new Image( "images/stopButton.png"));
 		this.resetButton = new PushButton( new Image( "images/resetButton.png"));
 		
+		this.playButton.setTitle( "Start");
+		this.stopButton.setTitle( "Stop/Pause");
+		this.resetButton.setTitle( "Reset");
+		this.powerPanel.setTitle( "aktueller Verbrauch [kWh]");
 		
-		this.actualPowerLabel.setStyleName( "powerLabel");		
+		this.actualPowerLabel.setStyleName( "powerLabel");	
 		this.unitLabel.setStyleName( "unitLabel");
 		
 		this.buttonPanel.add( playButton);
