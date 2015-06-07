@@ -58,7 +58,7 @@ public class RunDialogPresenter {
 				display.getPlayButton().setEnabled( false);
 				display.getStopButton().setEnabled( true);
 				display.getResetButton().setEnabled( false);
-				
+				display.getSimulatorLoadProfileChart().getXAxis().setExtremes( 0, simulatorDevice.getSimulatorLoadProfileAsArrayList().size());
 				closableDialogBox.setCloseButtonVisible( false);
 				closableDialogBox.setTitleInformation( "running 0%");
 				
