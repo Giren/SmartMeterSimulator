@@ -79,6 +79,14 @@ body {
 	background-color: #F1F1F1;
 }
 
+.deviceDialogFont {
+	font-family: Arial Unicode MS, Arial;	
+	font-weight: normal;
+	font-color: black;
+	text-align: left;
+	font-size: 14px;
+}
+
 .unitLabel {
 	font-family: Arial Unicode MS, Arial, sans-serif;
 	font-size: 40px;

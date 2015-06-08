@@ -54,7 +54,8 @@ public class ClosableDialogBox extends DialogBox {
             @Override
             public void onBrowserEvent(Event event) {
                  if(Event.ONCLICK == event.getTypeInt()) {
-                     hide();
+                	 hide();
+                	 clear();
                  } 
             }
         });
