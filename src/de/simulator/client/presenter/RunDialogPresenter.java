@@ -60,7 +60,7 @@ public class RunDialogPresenter {
 				display.getResetButton().setEnabled( false);
 				display.getSimulatorLoadProfileChart().getXAxis().setExtremes( 0, simulatorDevice.getSimulatorLoadProfileAsArrayList().size());
 				closableDialogBox.setCloseButtonVisible( false);
-				closableDialogBox.setTitleInformation( "running 0%");
+				closableDialogBox.setTitleInformation( "running 0.00%");
 				
 				simulationInterval = new Timer() {
 			    	@Override
@@ -108,9 +108,6 @@ public class RunDialogPresenter {
 		
 		int loadProfileSize = simulatorDevice.getSimulatorLoadProfileAsArrayList().size();
 		
-		double simulationPercent =  ( 100*simulationCounter / ( loadProfileSize-1));
-		//Window.alert( String.valueOf( simulationPercent));
-		
 		if ( simulationCounter < loadProfileSize)
 		{
 			Double nextValue = simulatorDevice.getSimulatorLoadProfileAsArrayList().get( simulationCounter);
@@ -118,7 +115,8 @@ public class RunDialogPresenter {
 			actLoadProfileSeries.addPoint( nextValue);
 			display.setPowerLabel( nextValue);
 			
-			closableDialogBox.setTitleInformation( "running " + String.valueOf(simulationPercent) + "%"); 
+			String calcPercent = NumberFormat.getFormat("0.00%").format( (double) simulationCounter / ( loadProfileSize-1));
+			closableDialogBox.setTitleInformation( "running " + calcPercent ); 
 			//Window.alert( simulationCounter + " " + loadProfileSize + " " + nextValue);
 			
 			simulationCounter++;

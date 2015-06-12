@@ -1,5 +1,8 @@
 package de.simulator.server;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,80 +23,110 @@ public class SimulatorServiceImpl extends RemoteServiceServlet implements
 	}
 
 	private void loadTestData() {
-		ArrayList<Integer> element1 = new ArrayList<Integer>();
-		element1.add(100);
-		element1.add(123);
-		element1.add(125);
-		element1.add(120);
-		element1.add(150);
-		element1.add(100);
-		element1.add(123);
-		element1.add(125);
-		element1.add(120);
-		element1.add(150);
-		element1.add(100);
-		element1.add(123);
-		element1.add(125);
-		element1.add(120);
-		element1.add(150);
-		element1.add(100);
-		element1.add(123);
-		element1.add(125);
-		element1.add(120);
-		element1.add(150);
-		element1.add(100);
-		element1.add(123);
-		element1.add(125);
-		element1.add(120);
-		element1.add(150);
-		element1.add(100);
-		element1.add(123);
-		element1.add(125);
-		element1.add(120);
-		element1.add(150);
-		ArrayList<Integer> element2 = new ArrayList<Integer>();
-		element2.add(90);
-		element2.add(125);
-		element2.add(150);
-		element2.add(80);
-		element2.add(100);
-		element2.add(90);
-		element2.add(125);
-		element2.add(150);
-		element2.add(80);
-		element2.add(100);
-		element2.add(90);
-		element2.add(125);
-		element2.add(150);
-		element2.add(80);
-		element2.add(100);
-		ArrayList<Integer> element3 = new ArrayList<Integer>();
-		element3.add(95);
-		element3.add(103);
-		element3.add(125);
-		element3.add(140);
-		element3.add(110);
-		element3.add(95);
-		element3.add(103);
-		element3.add(125);
-		element3.add(140);
-		element3.add(110);
-		element3.add(95);
-		element3.add(103);
-		element3.add(125);
-		element3.add(140);
-		element3.add(110);
+		BufferedReader br;
+		String line;
 		
-		final Device test1 = new Device("0", "cat1", "WMF",
-				"Mixer 400W", "Info1", element1);
-		final Device test2 = new Device("1", "cat2", "Grundig",
-				"Kühlschrank", "Info2", element2);
-		final Device test3 = new Device("2", "cat3", "WMF",
-				"Küchenmaschine", "Info3", element3);
+		try {
+	
+			br = new BufferedReader( new FileReader( "./devices.csv"));
+			br.readLine(); // erste Zeile überspringen
+			
+			while( ( line = br.readLine()) != null) {
+				ArrayList<Integer> loadProfile = new ArrayList<Integer>();
+				String[] lineSplit = line.split( ";");
+				
+				for( int i = 5; i < lineSplit.length; i+=10) {
+					loadProfile.add( Integer.parseInt( lineSplit[i]));
+				}
+				
+				Device device = new Device( lineSplit[0], lineSplit[1], lineSplit[2], lineSplit[3], lineSplit[4], loadProfile);
+				devices.put( device.getID(), device);
+			}
+	        
 
-		devices.put(test1.getID(), test1);
-		devices.put(test2.getID(), test2);
-		devices.put(test3.getID(), test3);
+	        br.close();
+	    } catch ( Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+//		ArrayList<Integer> element1 = new ArrayList<Integer>();
+//		
+//		
+//		
+//		element1.add(100);
+//		element1.add(123);
+//		element1.add(125);
+//		element1.add(120);
+//		element1.add(150);
+//		element1.add(100);
+//		element1.add(123);
+//		element1.add(125);
+//		element1.add(120);
+//		element1.add(150);
+//		element1.add(100);
+//		element1.add(123);
+//		element1.add(125);
+//		element1.add(120);
+//		element1.add(150);
+//		element1.add(100);
+//		element1.add(123);
+//		element1.add(125);
+//		element1.add(120);
+//		element1.add(150);
+//		element1.add(100);
+//		element1.add(123);
+//		element1.add(125);
+//		element1.add(120);
+//		element1.add(150);
+//		element1.add(100);
+//		element1.add(123);
+//		element1.add(125);
+//		element1.add(120);
+//		element1.add(150);
+//		ArrayList<Integer> element2 = new ArrayList<Integer>();
+//		element2.add(90);
+//		element2.add(125);
+//		element2.add(150);
+//		element2.add(80);
+//		element2.add(100);
+//		element2.add(90);
+//		element2.add(125);
+//		element2.add(150);
+//		element2.add(80);
+//		element2.add(100);
+//		element2.add(90);
+//		element2.add(125);
+//		element2.add(150);
+//		element2.add(80);
+//		element2.add(100);
+//		ArrayList<Integer> element3 = new ArrayList<Integer>();
+//		element3.add(95);
+//		element3.add(103);
+//		element3.add(125);
+//		element3.add(140);
+//		element3.add(110);
+//		element3.add(95);
+//		element3.add(103);
+//		element3.add(125);
+//		element3.add(140);
+//		element3.add(110);
+//		element3.add(95);
+//		element3.add(103);
+//		element3.add(125);
+//		element3.add(140);
+//		element3.add(110);
+//		
+//		final Device test1 = new Device("0", "cat1", "WMF",
+//				"Mixer 400W", "Info1", element1);
+//		final Device test2 = new Device("1", "cat2", "Grundig",
+//				"Kühlschrank", "Info2", element2);
+//		final Device test3 = new Device("2", "cat3", "WMF",
+//				"Küchenmaschine", "Info3", element3);
+//
+//		devices.put(test1.getID(), test1);
+//		devices.put(test2.getID(), test2);
+//		devices.put(test3.getID(), test3);
 	}
 
 	public Device getDevice(String id) {

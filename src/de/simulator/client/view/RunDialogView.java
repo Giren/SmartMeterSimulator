@@ -33,7 +33,7 @@ public class RunDialogView extends Composite implements RunDialogPresenter.Displ
 	
 	// Label
 	private Label actualPowerLabel = new Label("power");
-	private Label unitLabel = new Label( "kWh");
+	private Label unitLabel = new Label( "W");
 	
 	// LoadProfileChart
 	private Chart simulationLoadProfile = new Chart().setType(Series.Type.SPLINE)
@@ -72,7 +72,7 @@ public class RunDialogView extends Composite implements RunDialogPresenter.Displ
 		
 		this.buttonPanel.add( playButton);
 		this.buttonPanel.add( stopButton);
-		this.buttonPanel.add( resetButton);		
+		this.buttonPanel.add( resetButton);
 		
 		this.buttonPanel.setStyleName( "simulationPopUp");
 		this.buttonPanel.setWidth( "100%");
@@ -86,10 +86,11 @@ public class RunDialogView extends Composite implements RunDialogPresenter.Displ
 		this.powerPanel.setCellHorizontalAlignment( actualPowerLabel, HasHorizontalAlignment.ALIGN_RIGHT);
 		this.powerPanel.add( unitLabel);	
 		this.powerPanel.setCellVerticalAlignment( unitLabel, HasVerticalAlignment.ALIGN_MIDDLE);
-		this.powerPanel.setCellHorizontalAlignment( unitLabel, HasHorizontalAlignment.ALIGN_LEFT);
+		this.powerPanel.setCellHorizontalAlignment( unitLabel, HasHorizontalAlignment.ALIGN_CENTER);
 
 		this.powerPanel.setStyleName( "simulationPopUp");
-		this.powerPanel.setWidth( "370px");
+		this.powerPanel.setCellWidth( unitLabel, "50px");
+		this.powerPanel.setWidth( "350px");
 		this.powerPanel.setHeight( "125px");
 		
 		this.controlPanel.add( this.powerPanel);
@@ -98,7 +99,7 @@ public class RunDialogView extends Composite implements RunDialogPresenter.Displ
 
 		this.simulationLoadProfile.addSeries( this.loadProfileSeries);
 		this.simulationLoadProfile.getXAxis().setAxisTitleText( "time [s]", false);
-		this.simulationLoadProfile.getYAxis().setAxisTitleText( "kWh", false);
+		this.simulationLoadProfile.getYAxis().setAxisTitleText( "W", false);
 		this.simulationLoadProfile.setOption( "legend/enabled", false);
 		this.simulationLoadProfile.getXAxis().setAllowDecimals( true);
 		

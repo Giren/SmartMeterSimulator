@@ -76,10 +76,10 @@ public class SimulatorView extends Composite implements SimulatorPresenter.Displ
 		preViewDevice.setStyleName( "preViewDevice");
 		
 		this.channels.getXAxis().setAxisTitleText( "time [s]", true);
-		this.channels.getYAxis().setAxisTitleText( "kWh", true);
+		this.channels.getYAxis().setAxisTitleText( "W", true);
 		
 		this.preViewDevice.getXAxis().setAxisTitleText( "time [s]", true);
-		this.preViewDevice.getYAxis().setAxisTitleText( "kWh", true);
+		this.preViewDevice.getYAxis().setAxisTitleText( "W", true);
 
 		createDeviceTableDND();
 		configPanel.add( DeviceDataGrid); // erste Spalte DeviceTabelle

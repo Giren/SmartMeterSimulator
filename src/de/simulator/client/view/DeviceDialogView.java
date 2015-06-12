@@ -147,7 +147,7 @@ public class DeviceDialogView extends Composite implements DeviceDialogPresenter
 		this.controlPanel.setCellHorizontalAlignment( this.buttonPanel, HasHorizontalAlignment.ALIGN_RIGHT);
 		
 		this.preView.getXAxis().setAxisTitleText( "time [s]", false);
-		this.preView.getYAxis().setAxisTitleText( "kWh", false);
+		this.preView.getYAxis().setAxisTitleText( "W", false);
 		this.preView.setOption( "legend/enabled", false);
 		this.preView.getXAxis().setAllowDecimals( true);
 		this.preView.setWidth( "780px");
