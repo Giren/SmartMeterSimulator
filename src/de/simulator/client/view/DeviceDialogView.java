@@ -62,6 +62,8 @@ public class DeviceDialogView extends Composite implements DeviceDialogPresenter
 		this.sliderBarSimpleHorizontel = new SliderBarSimpleHorizontal(100, "100%", true);
 		this.sliderBarSimpleHorizontel.setMinMarkStep( 1);
 		this.sliderBarSimpleHorizontel.setNotSelectedInFocus();
+		this.sliderBarSimpleHorizontel.drawMarks( "white",10);
+		this.sliderBarSimpleHorizontel.setValue( 100);
 		
 		this.dialogContents.setSize( "800px", "400px");
 		this.dialogContents.setWidth( "800px");
@@ -156,8 +158,6 @@ public class DeviceDialogView extends Composite implements DeviceDialogPresenter
 		this.dialogContents.add( this.controlPanel);
 		this.dialogContents.add( this.sliderBarSimpleHorizontel);
 		this.dialogContents.add( this.preView);
-		
-		
 		
 		initWidget( this.dialogContents);
 	}

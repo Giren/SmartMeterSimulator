@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Widget;
 import com.kiouri.sliderbar.client.event.BarValueChangedEvent;
@@ -74,7 +75,7 @@ public class DeviceDialogPresenter {
 				new com.kiouri.sliderbar.client.event.BarValueChangedHandler() {
 					@Override
 					public void onBarValueChanged(BarValueChangedEvent event) {
-						updateSeries( event.getValue());
+						updateSeries( DeviceDialogPresenter.this.device.getLoadProfile().size()*event.getValue()/100);
 					}
 				});
 	}
@@ -106,11 +107,6 @@ public class DeviceDialogPresenter {
 		this.display.getDeviceName().setValue( this.device.getName());
 		this.display.getManufacturer().setValue( this.device.getManufacturer());
 		this.display.getLoadProfile().addSeries( arrayListToSeries( this.device.getLoadProfile(), this.device.getLoadProfile().size()));
-
-		int size = this.device.getLoadProfile().size();
-		this.display.getSlider().setMaxValue( size);
-		this.display.getSlider().drawMarks( "white",size);
-		this.display.getSlider().setValue( size);
 		
 		dialogBox = new ClosableDialogBox( "Geräteinformation", "");
 		dialogBox.setWidget( display.asWidget());
